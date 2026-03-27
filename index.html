@@ -799,82 +799,19 @@ function getCurrentLocalContext(query){
 
 function renderOnlineResult(data){
   const box = $('onlineResult');
+  const normalized = String(data || '')
+    .replace(/\\n/g, '\n')
+    .replace(/\r\n/g, '\n')
+    .trim();
 
-  const renderRaw = (txt, badge='🤖 نتيجة التحليل') => {
-    const normalized = String(txt || '')
-      .replace(/\\n/g, '\n')
-      .replace(/\r\n/g, '\n')
-      .trim();
-
-    if(!normalized){
-      box.innerHTML = `
-        <div class="note">
-          <div class="pills"><span class="pill amber">🤖 نتيجة غير مكتملة</span></div>
-          <div style="margin-top:12px;line-height:1.95">لم تصل نتيجة قابلة للعرض.</div>
-        </div>`;
-      return;
-    }
-
-    box.innerHTML = `
-      <div class="note">
-        <div class="pills">
-          <span class="pill blue">${badge}</span>
-        </div>
-        <div style="margin-top:12px;line-height:1.95;white-space:pre-wrap">${escapeHtml(normalized)}</div>
-        <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
-      </div>`;
-  };
-
-  if(typeof data === 'string'){
-    const cleanedText = String(data || '')
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/```$/i, '')
-      .trim();
-
-    if(!cleanedText || cleanedText === '{' || cleanedText === '}' || cleanedText === '{}' || cleanedText === '[]'){
-      box.innerHTML = `
-        <div class="note">
-          <div class="pills"><span class="pill amber">🤖 نتيجة غير مكتملة</span></div>
-          <div style="margin-top:12px;line-height:1.95">الخدمة رجّعت نتيجة غير قابلة للعرض. جرّب مرة أخرى أو استخدم اسم منتج أوضح.</div>
-          <div class="confidence">تم تجاهل استجابة غير مكتملة من خدمة التحليل الأونلاين.</div>
-        </div>`;
-      return;
-    }
-
-    // إذا رجع JSON كنص، حاول فقط تحويله لنص مرتب؛ وإلا اعرض النص كما هو كاملًا
-    const firstBrace = cleanedText.indexOf('{');
-    const lastBrace = cleanedText.lastIndexOf('}');
-    if(firstBrace !== -1 && lastBrace > firstBrace){
-      try {
-        const maybeJson = cleanedText.slice(firstBrace, lastBrace + 1);
-        const parsed = JSON.parse(maybeJson);
-        return renderOnlineResult(parsed);
-      } catch(e) {}
-    }
-
-    return renderRaw(cleanedText);
-  }
-
-  if(data && typeof data === 'object'){
-    const verdict = data.verdict || data['الحكم'] || '';
-    const reason = data.reason || data.reasoning || data['السبب'] || '';
-    const ingredients = Array.isArray(data.ingredients)
-      ? data.ingredients.slice(0,3).join('، ')
-      : (data['المكونات المحتملة'] || '');
-    const confidence = data.confidence || data['الثقة'] || '';
-
-    const lines = [
-      verdict ? `الحكم: ${verdict}` : '',
-      reason ? `السبب: ${reason}` : '',
-      ingredients ? `المكونات المحتملة: ${ingredients}` : '',
-      confidence ? `الثقة: ${confidence}` : ''
-    ].filter(Boolean).join('\n');
-
-    return renderRaw(lines || JSON.stringify(data, null, 2), '🤖 نتيجة التحليل');
-  }
-
-  return renderRaw(String(data || ''));
+  box.innerHTML = `
+    <div class="note">
+      <div class="pills">
+        <span class="pill blue">🤖 نتيجة التحليل</span>
+      </div>
+      <div style="margin-top:12px;line-height:1.95;white-space:pre-wrap">${escapeHtml(normalized || 'ما فيه نتيجة واضحة.')}</div>
+      <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
+    </div>`;
 }
 
 
@@ -884,19 +821,24 @@ async function runOnlineLookup(){
     $('onlineStatus').textContent = 'اكتب اسم المنتج أولاً.';
     return;
   }
+
   const apiUrl = getApiUrl();
   const remaining = getRemainingSearches();
+
   if(remaining <= 0){
     $('onlineStatus').textContent = `وصلت للحد اليومي للبحث الأونلاين (${getDailyLimit()} طلب في هذا الجهاز). يعود العداد تلقائياً غداً.`;
     $('onlineResult').innerHTML = '<div class="note">يمكنك الاستمرار في البحث المحلي داخل التطبيق، أو رفع الحد من ملف <code>config.js</code>.</div>';
     return;
   }
+
   if(!apiUrl){
     $('onlineStatus').innerHTML = 'أضف رابط الـ API داخل <code>config.js</code> أو استخدم نسخة Vercel المرفقة.';
     return;
   }
+
   $('onlineStatus').innerHTML = '<span class="spinner"></span> جارٍ البحث أونلاين وتحليل المكونات...';
   $('onlineResult').innerHTML = '';
+
   try {
     const res = await fetch(apiUrl, {
       method: 'POST',
@@ -906,25 +848,27 @@ async function runOnlineLookup(){
         localContext: getCurrentLocalContext(query)
       })
     });
+
     const data = await res.json();
 
-    if(!res.ok) throw new Error(data?.error || data?.details || 'فشل الاتصال بالـ API');
-
-    const payload = (data && Object.prototype.hasOwnProperty.call(data, 'result')) ? data.result : data;
-    if(payload === undefined || payload === null){
-      throw new Error('الخدمة لم ترجع نتيجة قابلة للعرض');
+    if(!res.ok){
+      throw new Error(data?.error || data?.details || 'فشل الاتصال بالـ API');
     }
 
+    const output = data?.result || data?.error || 'ما فيه نتيجة واضحة.';
     const state = getUsageState();
     state.count += 1;
     saveUsageState(state);
+
     $('onlineStatus').textContent = `تم إكمال التحليل الأونلاين بنجاح. المتبقي اليوم: ${getRemainingSearches()} من ${getDailyLimit()}.`;
-    renderOnlineResult(payload);
+    renderOnlineResult(output);
   } catch (err) {
     $('onlineStatus').textContent = `تعذر تنفيذ البحث الأونلاين: ${err.message}`;
     $('onlineResult').innerHTML = '<div class="note">تأكد من نشر المشروع على Vercel وإضافة مفتاح Gemini في متغيرات البيئة باسم <code>GEMINI_API_KEY</code>.</div>';
   }
 }
+
+
 function registerSW(){
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
