@@ -2,154 +2,347 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مرجع حساسية الأكل</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مرجع حساسية الأكل الذكي</title>
 <meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="حساسية الأكل">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon-64.png" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <style>
 :root {
-  --bg:#0b1220; --bg2:#111827; --card:#182234cc; --line:#ffffff22; --txt:#eef4ff; --muted:#b6c2d8;
-  --red:#ef4444; --amber:#f59e0b; --green:#22c55e; --blue:#3b82f6;
+  --bg:#0b1220; --bg2:#10192e; --card:#172338cc; --card2:#101b2ecc; --line:#ffffff1a; --txt:#eef4ff; --muted:#b6c2d8;
+  --blue:#3b82f6; --cyan:#06b6d4; --green:#22c55e; --amber:#f59e0b; --red:#ef4444; --shadow:0 25px 60px rgba(0,0,0,.28);
 }
-*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--txt)}
-.wrap{max-width:1100px;margin:auto;padding:16px}
-.hero,.card{background:var(--card);border:1px solid var(--line);border-radius:24px;backdrop-filter:blur(10px);box-shadow:0 20px 50px #00000033}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--txt);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+a{color:inherit}
+.wrap{max-width:1240px;margin:auto;padding:16px}
+.hero,.card,.tabBtn,.select,.searchInput,.btn,.row,.chip,.stat,.resultHero,.miniCard,.pillFilter,.analysisBlock,.note{
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+}
+.hero,.card,.analysisBlock,.resultHero,.note{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
 .hero{padding:20px}
-.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
-.brand{display:flex;gap:12px;align-items:center}
-.logo{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#0ea5e9,#2563eb);font-size:28px}
-h1,h2,h3,p{margin:0}
-.sub{color:var(--muted);margin-top:6px}
-.lang{display:flex;border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.lang button{border:0;background:transparent;color:var(--txt);padding:10px 14px;font-weight:700;cursor:pointer}
-.lang button.active{background:#ffffff1a}
-.search{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-top:16px}
-.search input{padding:16px;border-radius:16px;border:1px solid var(--line);background:#ffffff0d;color:var(--txt);font-size:16px;outline:none}
-.btn{padding:0 18px;border-radius:16px;border:0;cursor:pointer;font-weight:800;color:#fff;min-height:52px;background:linear-gradient(135deg,#2563eb,#06b6d4)}
-.btn.secondary{background:#ffffff12;border:1px solid var(--line)}
-.helper{margin-top:10px;color:var(--muted);font-size:14px}
-.grid{display:grid;grid-template-columns:1.3fr .9fr;gap:16px;margin-top:16px}
+.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{width:60px;height:60px;border-radius:20px;display:grid;place-items:center;
+background:linear-gradient(135deg,#38bdf8,#2563eb 55%,#7c3aed);font-size:30px;box-shadow:0 10px 30px rgba(37,99,235,.4)}
+h1,h2,h3,h4,p{margin:0} .sub{color:var(--muted)}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+.tabBtn{border:1px solid var(--line);background:#ffffff0c;color:var(--txt);padding:12px 16px;border-radius:16px;font-weight:800;cursor:pointer}
+.tabBtn.active{background:linear-gradient(135deg,#2563eb,#0891b2);border-color:transparent}
+.searchPanel{display:grid;grid-template-columns:1.2fr .8fr .8fr auto auto;gap:10px;margin-top:18px}
+.searchInput,.select{width:100%;min-height:54px;padding:0 16px;border-radius:16px;border:1px solid var(--line);background:#ffffff0d;color:var(--txt);font-size:16px;outline:none}
+.select option{background:#0f172a;color:#fff}
+.btn{min-height:54px;padding:0 18px;border:0;border-radius:16px;cursor:pointer;font-weight:800;color:#fff;background:linear-gradient(135deg,#2563eb,#06b6d4)}
+.btn.secondary{background:#ffffff0f;border:1px solid var(--line);color:var(--txt)}
+.helper{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.7}
+.layout{display:grid;grid-template-columns:1.3fr .95fr;gap:16px;margin-top:16px}
 .card{padding:18px}
-.empty{padding:28px;text-align:center;color:var(--muted)}
-.status{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.pill{display:inline-flex;gap:7px;align-items:center;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:800;border:1px solid transparent}
-.pill.red{background:#ef444422;color:#fecaca;border-color:#ef444455}
-.pill.amber{background:#f59e0b22;color:#fde68a;border-color:#f59e0b55}
-.pill.green{background:#22c55e22;color:#bbf7d0;border-color:#22c55e55}
-.pill.blue{background:#3b82f622;color:#bfdbfe;border-color:#3b82f655}
-.title{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start}
-.alert{margin:14px 0;padding:14px 16px;border-radius:18px;border:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
-.alert.red{background:#ef44441a} .alert.amber{background:#f59e0b1a} .alert.green{background:#22c55e1a} .alert.blue{background:#3b82f61a}
-.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
-.metric{padding:14px;border-radius:18px;background:#ffffff10;border:1px solid var(--line)}
-.metric .label{color:var(--muted);font-size:14px} .metric .value{margin-top:7px;font-size:17px;font-weight:800}
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-.chip{padding:12px;border-radius:14px;border:1px solid var(--line);background:#ffffff0d;color:var(--txt);font-weight:700;cursor:pointer}
-.list{display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto;margin-top:12px}
-.row{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:#ffffff0d;cursor:pointer}
-.row:hover{background:#ffffff18}
-.row .main{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.row .sub{font-size:13px}
-.footer{margin-top:18px;text-align:center;color:var(--muted);font-size:14px}
-@media (max-width:860px){.grid{grid-template-columns:1fr} .search{grid-template-columns:1fr 1fr} .search input{grid-column:1/-1} .quick{grid-template-columns:repeat(2,1fr)}}
+.sectionHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.pills,.quick,.statsGrid,.metricGrid,.riskGrid,.topFoods{display:flex;flex-wrap:wrap;gap:10px}
+.pill,.pillFilter{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:13px;font-weight:800;border:1px solid transparent}
+.pill.red{background:#ef44441c;color:#fecaca;border-color:#ef444455}
+.pill.amber{background:#f59e0b1c;color:#fde68a;border-color:#f59e0b55}
+.pill.green{background:#22c55e1c;color:#bbf7d0;border-color:#22c55e55}
+.pill.blue{background:#3b82f61c;color:#bfdbfe;border-color:#3b82f655}
+.pill.gray{background:#ffffff10;color:#dbe6ff;border-color:#ffffff1c}
+.pillFilter{background:#ffffff10;color:var(--txt);border-color:var(--line);cursor:pointer}
+.pillFilter.active{background:linear-gradient(135deg,#1d4ed8,#0891b2);border-color:transparent}
+.rowList{display:flex;flex-direction:column;gap:10px;max-height:720px;overflow:auto;padding-right:2px}
+.row{padding:14px 15px;border-radius:18px;border:1px solid var(--line);background:#ffffff0d;cursor:pointer}
+.row:hover{background:#ffffff16}
+.row .main{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.row .meta{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.6}
+.empty{padding:30px 18px;text-align:center;color:var(--muted);line-height:1.9}
+.resultHero{padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));}
+.resultTitle{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.banner{margin-top:14px;padding:14px 16px;border-radius:18px;border:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;line-height:1.8}
+.banner.red{background:#ef44441a} .banner.amber{background:#f59e0b1a} .banner.green{background:#22c55e1a} .banner.blue{background:#3b82f61a}
+.metricGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.miniCard,.stat{padding:14px;border-radius:18px;background:#ffffff0d;border:1px solid var(--line)}
+.miniCard .label,.stat .label{color:var(--muted);font-size:13px} .miniCard .value,.stat .value{margin-top:8px;font-weight:800;line-height:1.7}
+.note{padding:15px 16px;margin-top:14px;line-height:1.8}
+.quick{margin-top:12px}
+.chip{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:#ffffff0d;color:var(--txt);font-weight:700;cursor:pointer}
+.analysisGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.analysisBlock{padding:18px}
+.topFoods{flex-direction:column}
+.foodLine{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed #ffffff18}
+.foodLine:last-child{border-bottom:0;padding-bottom:0}
+.confidence{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.7}
+.footer{margin:18px 0 10px;text-align:center;color:var(--muted);font-size:14px}
+.hidden{display:none !important}
+.small{font-size:13px;color:var(--muted)}
+.installTag{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#22c55e1a;border:1px solid #22c55e40;color:#bbf7d0;font-size:13px;font-weight:800}
+
+.onlineBox{margin-top:14px;padding:16px;border-radius:20px;border:1px solid var(--line);background:#ffffff0d}
+.onlineRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.onlineMeta{color:var(--muted);font-size:13px;line-height:1.8;margin-top:8px}
+.sources{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.sourceItem{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:#ffffff0d}
+.sourceItem a{color:#bfdbfe;text-decoration:none}
+.sourceItem a:hover{text-decoration:underline}
+.onlineStatus{margin-top:12px}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px;margin-left:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (max-width:980px){
+  .layout,.analysisGrid{grid-template-columns:1fr}
+  .searchPanel{grid-template-columns:1fr 1fr}
+  .searchPanel .searchInput{grid-column:1/-1}
+}
+@media (max-width:640px){
+  .wrap{padding:12px}
+  .hero,.card,.analysisBlock,.resultHero,.note{border-radius:20px}
+  .searchPanel{grid-template-columns:1fr}
+  .metricGrid{grid-template-columns:1fr}
+}
 </style>
+<script src="./config.js"></script>
 </head>
 <body>
 <div class="wrap">
   <section class="hero">
     <div class="top">
       <div class="brand">
-        <div class="logo">🩺</div>
+        <div class="logo">🧪</div>
         <div>
-          <h1 id="heroTitle">مرجع حساسية الأكل</h1>
-          <p class="sub" id="heroSub">ابحث بالعربي أو الإنجليزي، مع أسماء متعددة مثل طماطم / طماط / tomato</p>
+          <h1>مرجع حساسية الأكل الذكي</h1>
+          <p class="sub">بحث ذكي يتحمل الأخطاء الإملائية، فلترة حسب النوع، وضع داكن دائم، دعم PWA، وصفحة تحليل شامل للأطعمة الأكثر خطراً والأكثر أماناً.</p>
         </div>
       </div>
-      <div class="lang">
-        <button id="arBtn" class="active">العربية</button>
-        <button id="enBtn">English</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <span class="installTag">📲 يعمل كتطبيق PWA</span>
+        <div class="tabs">
+          <button class="tabBtn active" id="tabSearch">البحث الذكي</button>
+          <button class="tabBtn" id="tabAnalysis">التحليل الشامل</button>
+        </div>
       </div>
     </div>
-    <div class="search">
-      <input id="searchInput" placeholder="اكتب اسم الأكل..." />
-      <button class="btn" id="searchBtn">🔎 بحث</button>
-      <button class="btn secondary" id="clearBtn">✖ مسح</button>
+
+    <div class="searchPanel" id="searchPanel">
+      <input id="searchInput" class="searchInput" placeholder="ابحث باسم الطعام أو المنتج: جبنة بوك، حليب السعودية، لبن المراعي، صفار البيض..." />
+      <select id="categoryFilter" class="select"></select>
+      <select id="severityFilter" class="select">
+        <option value="all">كل درجات الحساسية</option>
+        <option value="high">خطر مرتفع</option>
+        <option value="medium">خطر متوسط</option>
+        <option value="low">خطر خفيف</option>
+        <option value="safe">الأكثر أماناً</option>
+      </select>
+      <button id="searchBtn" class="btn">بحث</button>
+      <button id="clearBtn" class="btn secondary">مسح</button>
     </div>
-    <div class="helper" id="helperText">جرب: طماط، خيار، كوسه، peanut، almond، wheat</div>
+
+    <div class="helper">
+      <strong>كيف يعمل البحث الذكي؟</strong> يطبع الاسم بشكل مرن ويتحمل الأخطاء البسيطة، ويفهم كثيراً من الأسماء التجارية الشائعة في السوق السعودي، ثم يربطها بأقرب مادة غذائية موجودة في قاعدة الحساسية. عند البحث عن <strong>اسم منتج تجاري</strong> فالنتيجة تعتبر <strong>تقديراً ذكياً</strong> وليست بديلاً عن قراءة المكونات الفعلية على العبوة. التطبيق الآن يدعم <strong>بحثاً مباشراً + تقديراً حسب عائلة المنتج</strong>، لكنه لا يمكنه ضمان تغطية حرفية لكل منتج محلي بدون قاعدة بيانات مكونات محدثة لكل SKU.
+    </div>
+
+    <div class="onlineBox">
+      <div class="onlineRow">
+        <div>
+          <strong>البحث الذكي أونلاين</strong>
+          <div class="onlineMeta">إذا لم تكفِ القاعدة المحلية، يقدر التطبيق يرسل اسم المنتج إلى API خارجي لتحليل المكونات والبحث عن مصادر حديثة.</div>
+        </div>
+        <button id="onlineLookupBtn" class="btn secondary">بحث أونلاين عن المنتج</button>
+      </div>
+      <div id="onlineStatus" class="onlineStatus small">الحالة: البحث المحلي فقط.</div>
+      <div id="onlineResult"></div>
+    </div>
+
+    <div class="quick" id="quickChips"></div>
   </section>
 
-  <section class="grid">
-    <div class="card"><div id="resultArea"></div></div>
-    <div class="card">
-      <h3 id="suggestTitle">اقتراحات سريعة</h3>
-      <div class="quick" id="quickChips"></div>
-      <h3 style="margin-top:18px" id="matchTitle">نتائج مشابهة</h3>
-      <div class="list" id="matchesList"></div>
+  <section id="searchView">
+    <div class="layout">
+      <div class="card">
+        <div class="sectionHead">
+          <h3>نتيجة التحليل</h3>
+          <div class="pills" id="resultPills"></div>
+        </div>
+        <div id="resultArea" class="empty">🍽️ اكتب اسم طعام أو منتج غذائي، وسأحاول تحديد مستوى الأمان لك بناءً على قاعدة الحساسية الحالية.</div>
+      </div>
+
+      <div class="card">
+        <div class="sectionHead">
+          <h3>أفضل النتائج المطابقة</h3>
+          <span class="small" id="resultsCount">0 نتيجة</span>
+        </div>
+        <div class="pills" id="typePills"></div>
+        <div id="matchesList" class="rowList"></div>
+      </div>
     </div>
   </section>
 
-  <div class="footer" id="footerText">هذا مرجع سريع مبني على نتائج تقريرك لتسهيل الرجوع من الجوال.</div>
+  <section id="analysisView" class="hidden">
+    <div class="analysisGrid">
+      <div class="analysisBlock">
+        <div class="sectionHead"><h3>ملخص سريع</h3></div>
+        <div class="metricGrid" id="overviewStats"></div>
+      </div>
+      <div class="analysisBlock">
+        <div class="sectionHead"><h3>توزيع مستويات الخطورة</h3></div>
+        <div class="metricGrid" id="severityStats"></div>
+      </div>
+    </div>
+
+    <div class="analysisGrid">
+      <div class="analysisBlock">
+        <div class="sectionHead"><h3>الأكثر خطراً عليك</h3></div>
+        <div class="topFoods" id="mostDangerous"></div>
+      </div>
+      <div class="analysisBlock">
+        <div class="sectionHead"><h3>الأكثر أماناً لك</h3></div>
+        <div class="topFoods" id="mostSafe"></div>
+      </div>
+    </div>
+
+    <div class="analysisGrid">
+      <div class="analysisBlock">
+        <div class="sectionHead"><h3>تحليل حسب النوع</h3><span class="small">يتغير حسب الفلتر الحالي</span></div>
+        <div class="metricGrid" id="categoryAnalysis"></div>
+      </div>
+      <div class="analysisBlock">
+        <div class="sectionHead"><h3>ملاحظات مهمة</h3></div>
+        <div class="note">
+          <div>1) إذا كان الاسم <strong>تجارياً</strong> مثل: بوك أو المراعي أو السعودية، فالتطبيق يعتمد على <strong>نوع المنتج</strong> والكلمات الموجودة في الاسم للوصول إلى أقرب مادة مرجعية.</div>
+          <div>2) التغطية المحلية هنا <strong>ذكية وقابلة للتوسعة</strong> لكنها ليست قاعدة رسمية كاملة لكل منتجات السوق السعودي.</div>
+          <div>3) للحصول على تغطية شاملة فعلياً لكل المنتجات المحلية، يلزم ربط التطبيق بقاعدة منتجات حية أو واجهة برمجية محدثة بشكل مستمر.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">تم تطوير الواجهة لتعمل أوفلاين بعد أول زيارة، مع حفظ ملفات التطبيق محلياً عبر Service Worker.</div>
 </div>
 
 <script>
 const foods = [{"code": "f75", "en": "Egg yolk", "ar": "صفار البيض", "class": 6, "ku_l": ">=100"}, {"code": "f198", "en": "Cow's Milk, boiled", "ar": "حليب بقر مغلي", "class": 0, "ku_l": "<0.35"}, {"code": "f325", "en": "Sheep´s milk", "ar": "حليب خروف", "class": 6, "ku_l": ">=100"}, {"code": "f863", "en": "Cream", "ar": "كريمة", "class": 2, "ku_l": "1.75"}, {"code": "f283", "en": "Buffalo milk", "ar": "حليب الجاموس", "class": 0, "ku_l": "<0.35"}, {"code": "f876", "en": "Cream cheese", "ar": "جبن كريمي", "class": 5, "ku_l": "65.52"}, {"code": "f94", "en": "Camenbert", "ar": "جبن كاممبرت", "class": 2, "ku_l": "1.44"}, {"code": "f810", "en": "Curd cheese", "ar": "جبن رائب", "class": 1, "ku_l": "0.52"}, {"code": "f78", "en": "Casein", "ar": "كازين", "class": 4, "ku_l": "27.2"}, {"code": "f190", "en": "Edam cheese", "ar": "جبنة ادام", "class": 2, "ku_l": "2.47"}, {"code": "f873", "en": "Cheese, Emmentaler type", "ar": "جبنة امنتال", "class": 0, "ku_l": "<0.35"}, {"code": "f1", "en": "Egg white", "ar": "بياض البيض", "class": 6, "ku_l": ">=100"}, {"code": "f200", "en": "Cheese, Gouda", "ar": "جبنة جودة", "class": 4, "ku_l": "45.51"}, {"code": "f203", "en": "Goat milk cheese", "ar": "جبن حليب الماعز", "class": 3, "ku_l": "7.59"}, {"code": "f874", "en": "Cheese, Gruyere type", "ar": "جبنة غرويير", "class": 3, "ku_l": "5.09"}, {"code": "f300", "en": "Goat´s milk", "ar": "حليب الماعز", "class": 6, "ku_l": ">=100"}, {"code": "f883", "en": "Cottage cheese", "ar": "جبن قريش", "class": 4, "ku_l": "32.11"}, {"code": "f875", "en": "Mozzarella", "ar": "موزاريلا", "class": 0, "ku_l": "<0.35"}, {"code": "f236", "en": "Cow whey", "ar": "مصل البقر", "class": 0, "ku_l": "<0.35"}, {"code": "f201", "en": "Parmesan", "ar": "بارميزان", "class": 1, "ku_l": "0.48"}, {"code": "f199", "en": "Cow's Milk", "ar": "حليب بقر", "class": 6, "ku_l": ">=100"}, {"code": "f205", "en": "Yoghurt", "ar": "لبن", "class": 3, "ku_l": "5.78"}, {"code": "f58", "en": "Duck", "ar": "لحم البط", "class": 2, "ku_l": "3.3"}, {"code": "f867", "en": "Red deer", "ar": "لحم غزال احمر", "class": 0, "ku_l": "<0.35"}, {"code": "f57", "en": "Goose", "ar": "لحم الاوز", "class": 0, "ku_l": "<0.35"}, {"code": "f167", "en": "Roe deer", "ar": "لحم غزال", "class": 1, "ku_l": "0.69"}, {"code": "f128", "en": "Grapevine snail", "ar": "حلزون", "class": 0, "ku_l": "<0.35"}, {"code": "f143", "en": "Turkey", "ar": "لحم الديك الرومي", "class": 3, "ku_l": "4.93"}, {"code": "f169", "en": "Horse", "ar": "لحم الحصان", "class": 0, "ku_l": "<0.35"}, {"code": "f271", "en": "Veal", "ar": "لحم عجل", "class": 0, "ku_l": "<0.35"}, {"code": "f284", "en": "Ostrich", "ar": "لحم النعام", "class": 0, "ku_l": "<0.35"}, {"code": "f166", "en": "Wild boar", "ar": "لحم خنزير بري", "class": 0, "ku_l": "<0.35"}, {"code": "f26", "en": "Pork", "ar": "لحم الخنزير", "class": 0, "ku_l": "<0.35"}, {"code": "f27", "en": "Beef", "ar": "لحم بقري", "class": 1, "ku_l": "0.36"}, {"code": "f572", "en": "Quail", "ar": "لحم السمان", "class": 0, "ku_l": "<0.35"}, {"code": "f88", "en": "Lamb", "ar": "لحم الضأن", "class": 2, "ku_l": "2.23"}, {"code": "f804", "en": "Rabbit", "ar": "لحم الارنب", "class": 3, "ku_l": "3.59"}, {"code": "f83", "en": "Chicken", "ar": "لحم الدجاج", "class": 3, "ku_l": "3.89"}, {"code": "f935", "en": "Abalone", "ar": "اذن البحر", "class": 0, "ku_l": "<0.35"}, {"code": "f324", "en": "Perch", "ar": "سمك الفرخ", "class": 0, "ku_l": "<0.35"}, {"code": "f172", "en": "Anchovy", "ar": "انشوجة", "class": 0, "ku_l": "<0.35"}, {"code": "f170", "en": "Pike", "ar": "سمك الكراكي", "class": 0, "ku_l": "<0.35"}, {"code": "f37", "en": "Blue mussel", "ar": "بلح البحر الازرق", "class": 0, "ku_l": "<0.35"}, {"code": "f803", "en": "Pikeperch", "ar": "فرخ الكراكي", "class": 0, "ku_l": "<0.35"}, {"code": "f233", "en": "Carp", "ar": "سمك نهري", "class": 0, "ku_l": "<0.35"}, {"code": "f152", "en": "Plaice", "ar": "سمك البلايس", "class": 1, "ku_l": "0.46"}, {"code": "f415", "en": "Caviar black", "ar": "كافيار اسود", "class": 0, "ku_l": "<0.35"}, {"code": "f802", "en": "Pollock", "ar": "بلوق", "class": 0, "ku_l": "<0.35"}, {"code": "f55", "en": "Eel", "ar": "ثعبان البحر", "class": 0, "ku_l": "<0.35"}, {"code": "f411", "en": "Salmon roe", "ar": "بيض السالمون", "class": 0, "ku_l": "<0.35"}, {"code": "f327", "en": "European catfish", "ar": "سلور اوروبي", "class": 0, "ku_l": "<0.35"}, {"code": "f173", "en": "Sardine", "ar": "سردين", "class": 0, "ku_l": "<0.35"}, {"code": "f231", "en": "Great crab", "ar": "سلطعون", "class": 0, "ku_l": "<0.35"}, {"code": "f338", "en": "Scallop", "ar": "محار الصدف", "class": 0, "ku_l": "<0.35"}, {"code": "f175", "en": "Haddock", "ar": "حدوق", "class": 0, "ku_l": "<0.35"}, {"code": "f174", "en": "Sole", "ar": "سمك سول", "class": 0, "ku_l": "<0.35"}, {"code": "f307", "en": "Hake", "ar": "نازلي", "class": 0, "ku_l": "<0.35"}, {"code": "f176", "en": "Squid", "ar": "حبار", "class": 1, "ku_l": "0.35"}, {"code": "f902", "en": "Halibut", "ar": "هلبوت", "class": 0, "ku_l": "<0.35"}, {"code": "f930", "en": "Trout", "ar": "سلمون مرقط", "class": 0, "ku_l": "<0.35"}, {"code": "f21", "en": "Herring", "ar": "رنجة", "class": 0, "ku_l": "<0.35"}, {"code": "f145", "en": "Turbot", "ar": "قرس", "class": 0, "ku_l": "<0.35"}, {"code": "f80", "en": "Lobster", "ar": "كركند", "class": 0, "ku_l": "<0.35"}, {"code": "f41", "en": "Salmon", "ar": "سالمون", "class": 1, "ku_l": "0.53"}, {"code": "f412", "en": "Lumpfish caviar", "ar": "كافيار لمبفيش", "class": 0, "ku_l": "<0.35"}, {"code": "f40", "en": "Tuna", "ar": "تونا", "class": 1, "ku_l": "0.36"}, {"code": "f171", "en": "Mackerel", "ar": "اسقمري", "class": 0, "ku_l": "<0.35"}, {"code": "f3", "en": "Cod", "ar": "قد", "class": 0, "ku_l": "<0.35"}, {"code": "f819", "en": "Octopus", "ar": "اخطبوط", "class": 0, "ku_l": "<0.35"}, {"code": "f24", "en": "Shrimp", "ar": "روبيان", "class": 1, "ku_l": "0.63"}, {"code": "f177", "en": "Oyster", "ar": "محار", "class": 1, "ku_l": "0.51"}, {"code": "f288", "en": "Broad bean", "ar": "فول", "class": 0, "ku_l": "<0.35"}, {"code": "f287", "en": "Red kidney bean", "ar": "فاصوليا حمراء", "class": 0, "ku_l": "<0.35"}, {"code": "f309", "en": "Chickpea", "ar": "حمص", "class": 0, "ku_l": "<0.35"}, {"code": "f15", "en": "White bean", "ar": "فاصوليا بيضاء", "class": 0, "ku_l": "<0.35"}, {"code": "f65", "en": "Lentil", "ar": "عدس", "class": 4, "ku_l": "28.32"}, {"code": "f950", "en": "Bean, green", "ar": "فاصوليا خضراء", "class": 2, "ku_l": "2.23"}, {"code": "f651", "en": "Mung beans", "ar": "لوبيا", "class": 0, "ku_l": "<0.35"}, {"code": "f31", "en": "Carrot", "ar": "جزر", "class": 1, "ku_l": "0.48"}, {"code": "f12", "en": "Pea, green", "ar": "بازلاء خضراء", "class": 4, "ku_l": "31.59"}, {"code": "f35", "en": "Potato", "ar": "بطاطس", "class": 0, "ku_l": "<0.35"}, {"code": "f952", "en": "Pumpkin", "ar": "يقطين", "class": 2, "ku_l": "0.71"}, {"code": "f319", "en": "Artichoke", "ar": "خرشوف", "class": 0, "ku_l": "<0.35"}, {"code": "f194", "en": "Lettuce", "ar": "خس", "class": 0, "ku_l": "<0.35"}, {"code": "f132", "en": "Asparagus", "ar": "هليون", "class": 0, "ku_l": "<0.35"}, {"code": "f844", "en": "Mushroom, Shitake", "ar": "فطر شيتاكي", "class": 0, "ku_l": "<0.35"}, {"code": "f181", "en": "Avocado", "ar": "افوكادو", "class": 0, "ku_l": "<0.35"}, {"code": "f812", "en": "Olive, green", "ar": "زيتون اخضر", "class": 0, "ku_l": "<0.35"}, {"code": "f471", "en": "Bear's garlic", "ar": "ثوم بري", "class": 0, "ku_l": "<0.35"}, {"code": "f180", "en": "Oyster mushroom", "ar": "فطر المحار", "class": 0, "ku_l": "<0.35"}, {"code": "f191", "en": "Beet root", "ar": "شمندر", "class": 0, "ku_l": "<0.35"}, {"code": "f189", "en": "Red cabbage", "ar": "كرنب احمر", "class": 0, "ku_l": "<0.35"}, {"code": "f846", "en": "Boletus", "ar": "فطر بوليتوس", "class": 0, "ku_l": "<0.35"}, {"code": "f312", "en": "Roquette", "ar": "جرجير", "class": 0, "ku_l": "<0.35"}, {"code": "f182", "en": "Broccoli", "ar": "بروكلي", "class": 0, "ku_l": "<0.35"}, {"code": "f193", "en": "Sauerkraut", "ar": "ملفوف مخلل", "class": 0, "ku_l": "<0.35"}, {"code": "f311", "en": "Brussels sprouts", "ar": "كرنب بروكسل", "class": 0, "ku_l": "<0.35"}, {"code": "f196", "en": "Savoy cabbage", "ar": "ملفوف سافوي", "class": 0, "ku_l": "<0.35"}, {"code": "f141", "en": "Button mushroom", "ar": "فطر زر", "class": 0, "ku_l": "<0.35"}, {"code": "f481", "en": "Shallot", "ar": "كراث", "class": 0, "ku_l": "<0.35"}, {"code": "f39", "en": "Cabbage", "ar": "كرنب", "class": 1, "ku_l": "0.4"}, {"code": "f188", "en": "Small radish", "ar": "فجل", "class": 0, "ku_l": "<0.35"}, {"code": "s800", "en": "Capers", "ar": "كبر", "class": 0, "ku_l": "<0.35"}, {"code": "f142", "en": "Soy milk", "ar": "حليب الصويا", "class": 0, "ku_l": "<0.35"}, {"code": "f62", "en": "Cauliflower", "ar": "قرنبيط", "class": 0, "ku_l": "<0.35"}, {"code": "f38", "en": "Spinach", "ar": "سبانخ", "class": 0, "ku_l": "<0.35"}, {"code": "f843", "en": "Chanterelle", "ar": "فطر شانتيريل", "class": 0, "ku_l": "<0.35"}, {"code": "f838", "en": "Stinging nettle", "ar": "قراص", "class": 0, "ku_l": "<0.35"}, {"code": "f837", "en": "Chicory", "ar": "هندباء", "class": 0, "ku_l": "<0.35"}, {"code": "f842", "en": "Sugar melon", "ar": "شمام", "class": 2, "ku_l": "2.01"}, {"code": "f183", "en": "Chinease cabbage", "ar": "كرنب صيني", "class": 0, "ku_l": "<0.35"}, {"code": "f101", "en": "Swede", "ar": "لفت سويدي", "class": 0, "ku_l": "<0.35"}, {"code": "f120", "en": "Cucumber", "ar": "خيار", "class": 4, "ku_l": "19.22"}, {"code": "f911", "en": "Tofu", "ar": "توفو", "class": 0, "ku_l": "<0.35"}, {"code": "f841", "en": "Dandelion", "ar": "زهرة الهندباء", "class": 0, "ku_l": "<0.35"}, {"code": "f304", "en": "Turnip", "ar": "لفت", "class": 0, "ku_l": "<0.35"}, {"code": "f149", "en": "Eggplant", "ar": "باذنجان", "class": 0, "ku_l": "<0.35"}, {"code": "f310", "en": "White  radish", "ar": "فجل ابيض", "class": 0, "ku_l": "<0.35"}, {"code": "f186", "en": "Fennel", "ar": "شمرة", "class": 0, "ku_l": "<0.35"}, {"code": "f197", "en": "Zucchini", "ar": "كوسا", "class": 5, "ku_l": "81.16"}, {"code": "f69", "en": "Horseradish", "ar": "فجل حار", "class": 0, "ku_l": "<0.35"}, {"code": "f85", "en": "Celery", "ar": "كرفس", "class": 1, "ku_l": "0.51"}, {"code": "f187", "en": "Kale", "ar": "كيل", "class": 0, "ku_l": "<0.35"}, {"code": "f47", "en": "Garlic", "ar": "ثوم", "class": 1, "ku_l": "0.65"}, {"code": "f936", "en": "Kelp", "ar": "عشب البحر", "class": 0, "ku_l": "<0.35"}, {"code": "f48", "en": "Onion", "ar": "بصل", "class": 0, "ku_l": "<0.35"}, {"code": "f163", "en": "Kohlrabi", "ar": "كولرابي", "class": 0, "ku_l": "<0.35"}, {"code": "f25", "en": "Tomato", "ar": "طماطم", "class": 5, "ku_l": "51.76"}, {"code": "f66", "en": "Leek", "ar": "بصل كراث", "class": 1, "ku_l": "0.38"}, {"code": "s23", "en": "Allspice", "ar": "بهارات", "class": 0, "ku_l": "<0.35"}, {"code": "f858", "en": "Lemon balm", "ar": "مليسة", "class": 0, "ku_l": "<0.35"}, {"code": "s4", "en": "Bay leaf", "ar": "ورق غار", "class": 0, "ku_l": "<0.35"}, {"code": "f964", "en": "Liguorice", "ar": "عرقسوس", "class": 0, "ku_l": "<0.35"}, {"code": "s3", "en": "Caraway", "ar": "كراوية", "class": 0, "ku_l": "<0.35"}, {"code": "s5", "en": "Nutmeg apple", "ar": "جوزة الطيب", "class": 0, "ku_l": "<0.35"}, {"code": "f267", "en": "Cardamom", "ar": "هيل", "class": 2, "ku_l": "3.11"}, {"code": "f86", "en": "Parsley", "ar": "بقدونس", "class": 0, "ku_l": "<0.35"}, {"code": "s802", "en": "Catmint", "ar": "قطرم", "class": 0, "ku_l": "<0.35"}, {"code": "s7", "en": "Pepper, black", "ar": "فلفل اسود", "class": 0, "ku_l": "<0.35"}, {"code": "s8", "en": "Cinnamon", "ar": "قرفة", "class": 0, "ku_l": "<0.35"}, {"code": "f126", "en": "Peppermint", "ar": "نعناع", "class": 0, "ku_l": "<0.35"}, {"code": "s21", "en": "Clove", "ar": "قرنفل", "class": 0, "ku_l": "<0.35"}, {"code": "s24", "en": "Rosemary", "ar": "اكليل الجبل", "class": 0, "ku_l": "<0.35"}, {"code": "s25", "en": "Common sage", "ar": "مريمية", "class": 0, "ku_l": "<0.35"}, {"code": "s12", "en": "Summer savory", "ar": "صعتر صيفي", "class": 0, "ku_l": "<0.35"}, {"code": "s27", "en": "Common thyme", "ar": "زعتر", "class": 0, "ku_l": "<0.35"}, {"code": "s11", "en": "Sweet basil", "ar": "ريحان", "class": 3, "ku_l": "10.46"}, {"code": "s13", "en": "Coriander seed", "ar": "بذور الكزبرة", "class": 0, "ku_l": "<0.35"}, {"code": "f272", "en": "Tarragon", "ar": "طرخون", "class": 0, "ku_l": "<0.35"}, {"code": "s31", "en": "Cumin", "ar": "كمون", "class": 0, "ku_l": "<0.35"}, {"code": "s9", "en": "Vanilla", "ar": "فانيلا", "class": 0, "ku_l": "<0.35"}, {"code": "s2", "en": "Curry powder", "ar": "مسحوق الكاري", "class": 0, "ku_l": "<0.35"}, {"code": "s15", "en": "Ginger", "ar": "زنجبيل", "class": 0, "ku_l": "<0.35"}, {"code": "s14", "en": "Dill", "ar": "شبت", "class": 0, "ku_l": "<0.35"}, {"code": "f45", "en": "Baker’s yeast", "ar": "خميرة الخباز", "class": 0, "ku_l": "<0.35"}, {"code": "f150", "en": "Carob", "ar": "خروب", "class": 0, "ku_l": "<0.35"}, {"code": "f99", "en": "Black tea", "ar": "شاي اسود", "class": 0, "ku_l": "<0.35"}, {"code": "f955", "en": "Coffee", "ar": "قهوة", "class": 1, "ku_l": "0.38"}, {"code": "f450", "en": "Brewer´s yeast", "ar": "خميرة البيرة", "class": 0, "ku_l": "<0.35"}, {"code": "f848", "en": "Green tea", "ar": "شاي اخضر", "class": 0, "ku_l": "<0.35"}, {"code": "f97", "en": "Cacoa", "ar": "كاكاو", "class": 1, "ku_l": "0.45"}, {"code": "f124", "en": "Honey", "ar": "عسل", "class": 2, "ku_l": "2.69"}, {"code": "f96", "en": "Camomille tea", "ar": "شاي بابونج", "class": 0, "ku_l": "<0.35"}, {"code": "f334", "en": "Hops", "ar": "جنجل", "class": 0, "ku_l": "<0.35"}, {"code": "f226", "en": "Cane sugar", "ar": "قصب السكر", "class": 0, "ku_l": "<0.35"}, {"code": "f89", "en": "Mustard", "ar": "خردل", "class": 6, "ku_l": ">=100"}, {"code": "f146", "en": "Grapefruit", "ar": "جريب فروت", "class": 0, "ku_l": "<0.35"}, {"code": "f92", "en": "Shaddock", "ar": "شادوك", "class": 0, "ku_l": "<0.35"}, {"code": "f32", "en": "Lemon", "ar": "ليمون", "class": 4, "ku_l": "18.41"}, {"code": "f34", "en": "Tangerine", "ar": "يوسفي", "class": 0, "ku_l": "<0.35"}, {"code": "f306", "en": "Lime", "ar": "ليمون اخضر حامض", "class": 0, "ku_l": "<0.35"}, {"code": "f33", "en": "Orange", "ar": "برتقال", "class": 3, "ku_l": "16.4"}, {"code": "f168", "en": "Apricot", "ar": "مشمش", "class": 0, "ku_l": "<0.35"}, {"code": "f213", "en": "Raisin", "ar": "زبيب", "class": 0, "ku_l": "<0.35"}, {"code": "f217", "en": "Black currant", "ar": "كشمش اسود", "class": 0, "ku_l": "<0.35"}, {"code": "f209", "en": "Raspberry", "ar": "توت العليق", "class": 0, "ku_l": "<0.35"}, {"code": "f207", "en": "Blackberry", "ar": "عليق", "class": 0, "ku_l": "<0.35"}, {"code": "f210", "en": "Red currant", "ar": "كشمش احمر", "class": 0, "ku_l": "<0.35"}, {"code": "f206", "en": "Blueberry", "ar": "توت ازرق", "class": 0, "ku_l": "<0.35"}, {"code": "f343", "en": "Rose hip", "ar": "ثمر الورد", "class": 0, "ku_l": "<0.35"}, {"code": "f211", "en": "Cranberry", "ar": "توت بري", "class": 0, "ku_l": "<0.35"}, {"code": "f212", "en": "Ruhbarb", "ar": "راوند", "class": 0, "ku_l": "<0.35"}, {"code": "f222", "en": "Date", "ar": "تمر", "class": 0, "ku_l": "<0.35"}, {"code": "f850", "en": "Sea buckthorn juice", "ar": "عصير النبق البحري", "class": 0, "ku_l": "<0.35"}, {"code": "f50", "en": "Grape", "ar": "عنب", "class": 0, "ku_l": "<0.35"}, {"code": "f73", "en": "Sweet cherry", "ar": "كرز", "class": 0, "ku_l": "<0.35"}, {"code": "f87", "en": "Honeydew melon", "ar": "كنتالوب", "class": 0, "ku_l": "<0.35"}, {"code": "f19", "en": "Sweet chestnut", "ar": "كستناء حلوة", "class": 0, "ku_l": "<0.35"}, {"code": "f943", "en": "Litchi", "ar": "ليتشي", "class": 0, "ku_l": "<0.35"}, {"code": "f329", "en": "Water melon", "ar": "بطيخ", "class": 0, "ku_l": "<0.35"}, {"code": "f162", "en": "Nectarine", "ar": "نكتارين", "class": 0, "ku_l": "<0.35"}, {"code": "f49", "en": "Apple", "ar": "تفاح", "class": 2, "ku_l": "2.85"}, {"code": "f947", "en": "Papaya", "ar": "بابايا", "class": 0, "ku_l": "<0.35"}, {"code": "f29", "en": "Banana", "ar": "موز", "class": 4, "ku_l": "20.81"}, {"code": "f948", "en": "Passion fruit", "ar": "باشن فروت", "class": 0, "ku_l": "<0.35"}, {"code": "f84", "en": "Kiwi fruit", "ar": "كيوي", "class": 0, "ku_l": "<0.35"}, {"code": "f30", "en": "Pear", "ar": "كمثرى", "class": 2, "ku_l": "2.92"}, {"code": "f91", "en": "Mango", "ar": "مانجا", "class": 3, "ku_l": "16.58"}, {"code": "f942", "en": "Persimon (kaki, sharon)", "ar": "كاكي", "class": 0, "ku_l": "<0.35"}, {"code": "f53", "en": "Peach", "ar": "خوخ", "class": 2, "ku_l": "1.09"}, {"code": "f122", "en": "Plum", "ar": "برقوق", "class": 0, "ku_l": "<0.35"}, {"code": "f52", "en": "Pineapple", "ar": "اناناس", "class": 1, "ku_l": "0.45"}, {"code": "f491", "en": "Pomegranates", "ar": "رمان", "class": 0, "ku_l": "<0.35"}, {"code": "f44", "en": "Strawberry", "ar": "فراولة", "class": 1, "ku_l": "0.45"}, {"code": "f811", "en": "Amaranth", "ar": "قطيفة", "class": 3, "ku_l": "3.93"}, {"code": "f5", "en": "Rye", "ar": "جاودار", "class": 6, "ku_l": ">=100"}, {"code": "f11", "en": "Buckwheat", "ar": "حنطة سوداء", "class": 2, "ku_l": "2.46"}, {"code": "f158", "en": "Spelt", "ar": "حنطة", "class": 6, "ku_l": ">=100"}, {"code": "f159", "en": "Durum wheat", "ar": "سميد", "class": 6, "ku_l": ">=100"}, {"code": "f827", "en": "Sweet lupine", "ar": "ترمس حلو", "class": 2, "ku_l": "2.23"}, {"code": "f791", "en": "Gliadin", "ar": "غليادين", "class": 2, "ku_l": "2.42"}, {"code": "f6", "en": "Barley", "ar": "شعير", "class": 6, "ku_l": ">=100"}, {"code": "f79", "en": "Gluten", "ar": "جلوتين", "class": 6, "ku_l": ">=100"}, {"code": "f8", "en": "Maize", "ar": "ذرة", "class": 0, "ku_l": "<0.35"}, {"code": "f831", "en": "Kamut wheat", "ar": "قمح كاموت", "class": 2, "ku_l": "2.44"}, {"code": "f7", "en": "Oat", "ar": "شوفان", "class": 2, "ku_l": "1.5"}, {"code": "f90", "en": "Malt", "ar": "مالت", "class": 0, "ku_l": "<0.35"}, {"code": "f14", "en": "Soy", "ar": "صويا", "class": 2, "ku_l": "2.17"}, {"code": "f164", "en": "Millet", "ar": "دخن", "class": 2, "ku_l": "0.88"}, {"code": "f4", "en": "Wheat", "ar": "قمح", "class": 6, "ku_l": ">=100"}, {"code": "f832", "en": "Quinoa", "ar": "كينوا", "class": 3, "ku_l": "8.24"}, {"code": "f9", "en": "Rice", "ar": "ارز", "class": 0, "ku_l": "<0.35"}, {"code": "f18", "en": "Brazil nut", "ar": "جوز برازيلي", "class": 0, "ku_l": "<0.35"}, {"code": "f316", "en": "Rape seed", "ar": "بذور اللفت", "class": 1, "ku_l": "0.38"}, {"code": "f36", "en": "Coconut", "ar": "جوز الهند", "class": 0, "ku_l": "<0.35"}, {"code": "f156", "en": "Sunflower seed", "ar": "بذور عباد الشمس", "class": 6, "ku_l": ">=100"}, {"code": "f98", "en": "Flax seed", "ar": "بذور الكتان", "class": 0, "ku_l": "<0.35"}, {"code": "f834", "en": "Tigernut", "ar": "لوز الارض", "class": 0, "ku_l": "<0.35"}, {"code": "f345", "en": "Macadamia nut", "ar": "مكاديميا", "class": 0, "ku_l": "<0.35"}, {"code": "f17", "en": "Hazelnut", "ar": "بندق", "class": 3, "ku_l": "5.28"}, {"code": "f103", "en": "Pecan nut", "ar": "جوز البيكان", "class": 0, "ku_l": "<0.35"}, {"code": "f13", "en": "Peanut", "ar": "فول سوداني", "class": 5, "ku_l": "95.28"}, {"code": "f216", "en": "Pine nut, pignoles", "ar": "صنوبر", "class": 0, "ku_l": "<0.35"}, {"code": "f10", "en": "Sesame", "ar": "سمسم", "class": 6, "ku_l": ">=100"}, {"code": "f818", "en": "Pistachio nut", "ar": "فستق", "class": 5, "ku_l": "74.7"}, {"code": "f20", "en": "Almond", "ar": "لوز", "class": 6, "ku_l": ">=100"}, {"code": "f165", "en": "Poppy seed", "ar": "بذور الخشخاش", "class": 0, "ku_l": "<0.35"}, {"code": "f204", "en": "Cashew nut", "ar": "كاجو", "class": 5, "ku_l": "74.29"}, {"code": "f157", "en": "Pumpkin seed", "ar": "بذور اليقطين", "class": 4, "ku_l": "25.66"}, {"code": "f16", "en": "Walnut", "ar": "جوز", "class": 4, "ku_l": "28.1"}];
+const BRAND_HINTS = ["بوك","المراعي","السعودية","نادك","الصافي","كي دي دي","داري","لونا","اكتيفيا","سنابل السلام","الربيع","نادا","ريم","السعوديه","almarai","saudia","saudi","nadec","puck","kdd","safi","dari","luna","activia","alrabie","nada","reem"];
+const PRODUCT_ALIAS_RULES = [
+  {keywords:["جبنه بوك","جبنة بوك","بوك جبنه","بوك","puck cream cheese","puck cheese","puck"], family:"creamCheese", label:"جبنة بوك / جبن كريمي"},
+  {keywords:["جبنه كريميه","جبنة كريمية","جبن كريمي","cream cheese","spread cheese","processed cheese"], family:"creamCheese", label:"جبن كريمي"},
+  {keywords:["جبنة شرائح","جبن شرائح","جبن توست","slices cheese","cheddar slices"], family:"cheddar", label:"جبنة شرائح / شيدر"},
+  {keywords:["شيدر","cheddar"], family:"cheddar", label:"جبنة شيدر"},
+  {keywords:["موزاريلا","mozzarella"], family:"mozzarella", label:"موزاريلا"},
+  {keywords:["بارميزان","parmesan"], family:"parmesan", label:"بارميزان"},
+  {keywords:["جوده","جودة","gouda"], family:"gouda", label:"جبنة جودة"},
+  {keywords:["لبنه","لبنة","labneh"], family:"yogurt", label:"لبنة / لبن"},
+  {keywords:["زبادي يوناني","لبن يوناني","greek yogurt"], family:"yogurt", label:"لبن / زبادي"},
+  {keywords:["لبن","زبادي","روب","raib","yogurt","yoghurt"], family:"yogurt", label:"لبن / زبادي"},
+  {keywords:["حليب السعوديه","حليب السعودية","saudia milk","milk saudia","حليب سعودية"], family:"cowMilk", label:"حليب بقري"},
+  {keywords:["حليب المراعي","almarai milk","milk almarai"], family:"cowMilk", label:"حليب بقري"},
+  {keywords:["حليب نادك","nadec milk"], family:"cowMilk", label:"حليب بقري"},
+  {keywords:["حليب الصافي","safi milk","safio milk"], family:"cowMilk", label:"حليب بقري"},
+  {keywords:["حليب كي دي دي","kdd milk"], family:"cowMilk", label:"حليب بقري"},
+  {keywords:["حليب خالي اللاكتوز","lactose free milk"], family:"cowMilk", label:"حليب بقري"},
+  {keywords:["لبن المراعي","زبادي المراعي","روب المراعي","yogurt almarai","almarai yogurt"], family:"yogurt", label:"لبن / زبادي"},
+  {keywords:["لبن نادك","زبادي نادك","روب نادك","nadec yogurt"], family:"yogurt", label:"لبن / زبادي"},
+  {keywords:["لبن السعودية","زبادي السعودية","روب السعودية","saudia yogurt"], family:"yogurt", label:"لبن / زبادي"},
+  {keywords:["كريمة","كريمه","cream","whipping cream","cooking cream"], family:"cream", label:"كريمة"},
+  {keywords:["زبدة","butter"], family:"butter", label:"زبدة"},
+  {keywords:["بيض","بيضه","بيضة","egg","eggs"], family:"egg", label:"بيض"},
+  {keywords:["صفار","yolk","egg yolk"], family:"eggYolk", label:"صفار البيض"},
+  {keywords:["بياض","white egg","egg white"], family:"eggWhite", label:"بياض البيض"},
+  {keywords:["مايونيز","mayonnaise","mayo"], family:"egg", label:"منتج قد يحتوي على البيض"},
+  {keywords:["كازين","casein"], family:"casein", label:"كازين"},
+  {keywords:["واي","whey","مصل","whey protein"], family:"whey", label:"مصل الحليب"},
+  {keywords:["لوز","almond","almond milk"], family:"almond", label:"لوز"},
+  {keywords:["فستق","pistachio"], family:"pistachio", label:"فستق"},
+  {keywords:["فول سوداني","peanut","peanut butter"], family:"peanut", label:"فول سوداني"},
+  {keywords:["سمسم","sesame","tahini","طحينة"], family:"sesame", label:"سمسم / طحينة"},
+  {keywords:["كاجو","cashew"], family:"cashew", label:"كاجو"},
+  {keywords:["بندق","hazelnut"], family:"hazelnut", label:"بندق"},
+  {keywords:["جوز","walnut"], family:"walnut", label:"جوز"},
+  {keywords:["قمح","wheat","جلوتين","gluten","مخبوزات","خبز","توست","pasta","macaroni"], family:"wheat", label:"قمح / جلوتين"},
+  {keywords:["شوفان","oat","oats"], family:"oat", label:"شوفان"},
+  {keywords:["أرز","ارز","rice"], family:"rice", label:"أرز"},
+  {keywords:["صويا","soy","soya","soy milk"], family:"soy", label:"صويا"},
+  {keywords:["عدس","lentil"], family:"lentil", label:"عدس"},
+  {keywords:["حمص","chickpea","hummus"], family:"chickpea", label:"حمص"},
+  {keywords:["دجاج","chicken","nuggets","strips"], family:"chicken", label:"دجاج"},
+  {keywords:["لحم بقري","beef","burger"], family:"beef", label:"لحم بقري"},
+  {keywords:["روبيان","جمبري","shrimp","prawn"], family:"shrimp", label:"روبيان"},
+  {keywords:["سالمون","salmon"], family:"salmon", label:"سالمون"},
+  {keywords:["تونا","tuna"], family:"tuna", label:"تونا"},
+  {keywords:["خيار","cucumber","pickles"], family:"cucumber", label:"خيار"},
+  {keywords:["طماطم","tomato","ketchup"], family:"tomato", label:"طماطم"},
+  {keywords:["موز","banana"], family:"banana", label:"موز"},
+  {keywords:["برتقال","orange"], family:"orange", label:"برتقال"},
+  {keywords:["ليمون","lemon"], family:"lemon", label:"ليمون"},
+  {keywords:["عسل","honey"], family:"honey", label:"عسل"},
+  {keywords:["خردل","mustard"], family:"mustard", label:"خردل"}
+];
 
-const texts = {
-  ar: {
-    heroTitle:"مرجع حساسية الأكل", heroSub:"ابحث بالعربي أو الإنجليزي، مع أسماء متعددة مثل طماطم / طماط / tomato",
-    searchPlaceholder:"اكتب اسم الأكل...", searchBtn:"🔎 بحث", clearBtn:"✖ مسح", helperText:"جرب: طماط، خيار، كوسه، peanut، almond، wheat",
-    suggestTitle:"اقتراحات سريعة", matchTitle:"نتائج مشابهة", footerText:"هذا مرجع سريع مبني على نتائج تقريرك لتسهيل الرجوع من الجوال.",
-    noQuery:"ابدأ بكتابة اسم الطعام للبحث.", notFound:"ما لقيت نتيجة مباشرة. جرّب اسمًا آخر أو اختر من النتائج المشابهة.",
-    reaction:"يسبب حساسية/عدم تحمل", strength:"قوة الحساسية", classLabel:"الفئة", rangeLabel:"مدى الفئة", valueLabel:"القيمة", codeLabel:"الكود",
-    arabicName:"الاسم العربي", englishName:"الاسم الإنجليزي", yes:"نعم", slight:"خفيفة", no:"لا", strong:"قوية", medium:"متوسطة", weak:"ضعيفة", low:"منخفضة جدًا / طبيعية",
-    bannerStrong:"تنبيه قوي: هذا العنصر في فئة مرتفعة، الأفضل تتجنبه أو تتأكد من مكوناته قبل الأكل.",
-    bannerMedium:"تنبيه متوسط: هذا العنصر عنده تفاعل متوسط، انتبه للكمية أو التكرار.",
-    bannerWeak:"تنبيه خفيف: يوجد تفاعل منخفض، راقب الاستجابة إذا أكلته.",
-    bannerLow:"النتيجة منخفضة جدًا في التقرير، لكن خذ وضعك الصحي العام بعين الاعتبار.",
-    similarHint:"اضغط على أي نتيجة مشابهة لعرض تفاصيلها.",
-    searchExamples:["طماط","خيار","كوسه","فول سوداني","قمح","لوز","مانجا","ليمون"]
-  },
-  en: {
-    heroTitle:"Food Sensitivity Reference", heroSub:"Search in Arabic or English with multiple aliases like tomato / طماطم / طماط",
-    searchPlaceholder:"Type a food name...", searchBtn:"🔎 Search", clearBtn:"✖ Clear", helperText:"Try: tomato, cucumber, zucchini, peanut, almond, wheat",
-    suggestTitle:"Quick picks", matchTitle:"Similar results", footerText:"A fast mobile reference built from your report for quick access on iPhone.",
-    noQuery:"Start by typing a food name to search.", notFound:"No direct result found. Try another name or choose from similar matches.",
-    reaction:"Causes sensitivity/intolerance", strength:"Sensitivity strength", classLabel:"Class", rangeLabel:"Range", valueLabel:"Value", codeLabel:"Code",
-    arabicName:"Arabic name", englishName:"English name", yes:"Yes", slight:"Mild", no:"No", strong:"Strong", medium:"Medium", weak:"Weak", low:"Very low / Normal",
-    bannerStrong:"High alert: this item is in a high class in your report. Avoid it or check ingredients carefully.",
-    bannerMedium:"Moderate alert: this item shows a moderate reaction. Watch quantity and frequency.",
-    bannerWeak:"Mild alert: low reaction detected. Monitor your response if you eat it.",
-    bannerLow:"Very low result in the report, but still consider your overall medical context.",
-    similarHint:"Tap any similar result to show its details.",
-    searchExamples:["tomato","cucumber","zucchini","peanut","wheat","almond","mango","lemon"]
-  }
+const FAMILY_MAP = {
+  creamCheese: ["Cream cheese","Curd cheese","Cottage cheese"],
+  cheddar: ["Edam cheese","Cheese, Gouda","Cream cheese"],
+  cowMilk: ["Cow's Milk","Cow's Milk, boiled","Cow whey","Casein"],
+  yogurt: ["Yoghurt","Curd cheese","Cow's Milk"],
+  cream: ["Cream","Cow's Milk","Casein"],
+  butter: ["Cream","Cow's Milk","Casein"],
+  egg: ["Egg white","Egg yolk"],
+  eggYolk: ["Egg yolk"],
+  eggWhite: ["Egg white"],
+  casein: ["Casein","Cow's Milk","Cream cheese"],
+  whey: ["Cow whey","Cow's Milk"],
+  mozzarella: ["Mozzarella"],
+  parmesan: ["Parmesan"],
+  gouda: ["Cheese, Gouda"],
+  almond: ["Almond"],
+  pistachio: ["Pistachio nut"],
+  peanut: ["Peanut"],
+  sesame: ["Sesame"],
+  cashew: ["Cashew nut"],
+  hazelnut: ["Hazelnut"],
+  walnut: ["Walnut"],
+  wheat: ["Wheat","Gluten"],
+  oat: ["Oat"],
+  rice: ["Rice"],
+  soy: ["Soy","Soy milk","Tofu"],
+  lentil: ["Lentil"],
+  chickpea: ["Chickpea"],
+  chicken: ["Chicken"],
+  beef: ["Beef"],
+  shrimp: ["Shrimp"],
+  salmon: ["Salmon"],
+  tuna: ["Tuna"],
+  cucumber: ["Cucumber"],
+  tomato: ["Tomato"],
+  banana: ["Banana"],
+  orange: ["Orange"],
+  lemon: ["Lemon"],
+  honey: ["Honey"],
+  mustard: ["Mustard"]
 };
 
-const manualAliases = {
-  "طماطم":["طماطم","طماط","بندوره","بندورة","tomato","tomatoes"],
-  "خيار":["خيار","خياره","cucumber","cucumbers"],
-  "كوسا":["كوسا","كوسه","zucchini","courgette"],
-  "بطاطس":["بطاطس","بطاطا","potato","potatoes"],
-  "باذنجان":["باذنجان","بتنجان","eggplant","aubergine"],
-  "لوز":["لوز","اللوز","almond","almonds"],
-  "فستق":["فستق","الفستق","pistachio","pistachios"],
-  "فول سوداني":["فول سوداني","سوداني","peanut","peanuts","groundnut"],
-  "سمسم":["سمسم","sesame","sesame seed","sesame seeds"],
-  "قمح":["قمح","wheat"], "جلوتين":["جلوتين","gluten"], "شعير":["شعير","barley"], "حليب":["حليب","milk"],
-  "بيض":["بيض","بيضه","بيضة","egg","eggs"], "لبن":["لبن","زبادي","yoghurt","yogurt"], "موز":["موز","banana","bananas"],
-  "مانجا":["مانجا","mango","mangoes"], "برتقال":["برتقال","orange","oranges"], "ليمون":["ليمون","lemon","lemons"],
-  "تفاح":["تفاح","apple","apples"], "كمثرى":["كمثرى","اجاص","pear","pears"], "فراولة":["فراوله","فراولة","strawberry","strawberries"],
-  "عنب":["عنب","grape","grapes"], "رمان":["رمان","pomegranate","pomegranates"], "عدس":["عدس","lentil","lentils"],
-  "بازلاء":["بازلاء","بزاليا","pea","peas","green pea","green peas"], "حمص":["حمص","chickpea","chickpeas","garbanzo"],
-  "ارز":["رز","أرز","rice"], "ذرة":["ذره","ذرة","corn","maize"], "صويا":["صويا","soy","soybean","soya"],
-  "كاجو":["كاجو","cashew","cashews"], "جوز":["جوز","walnut","walnuts"], "بندق":["بندق","hazelnut","hazelnuts"],
-  "صنوبر":["صنوبر","pine nut","pine nuts"], "خردل":["خردل","mustard"], "روبيان":["روبيان","جمبري","shrimp","prawn","prawns"],
-  "دجاج":["دجاج","chicken"], "تونا":["تونا","tuna"], "سالمون":["سالمون","salmon"], "قهوة":["قهوة","coffee"], "عسل":["عسل","honey"]
-};
+const CATEGORY_RULES = [
+  {key:"dairy", ar:"ألبان وأجبان", test:(t)=>/(حليب|لبن|زبادي|زبادي|جبن|جبنه|جبنة|كريمه|كريمة|كازين|مصل|milk|cheese|cream|yoghurt|yogurt|casein|whey|mozzarella|parmesan|gouda)/.test(t)},
+  {key:"eggs", ar:"بيض", test:(t)=>/(بيض|صفار|بياض|egg|yolk)/.test(t)},
+  {key:"meat", ar:"لحوم ودواجن", test:(t)=>/(لحم|دجاج|ديك|بط|اوز|أوز|غزال|ارنب|أرنب|بقر|عجل|ضأن|خروف|ماعز|chicken|beef|veal|lamb|turkey|duck|goose|rabbit|horse|deer|pork|boar|ostrich)/.test(t)},
+  {key:"seafood", ar:"أسماك ومأكولات بحرية", test:(t)=>/(سمك|سالمون|تونا|سردين|روبيان|جمبري|حبار|سلطعون|محار|كافيار|fish|salmon|tuna|sardine|shrimp|prawn|squid|crab|scallop|mussel|eel|carp|halibut|anchovy)/.test(t)},
+  {key:"fruits", ar:"فواكه", test:(t)=>/(تفاح|كمثرى|فراوله|فراولة|عنب|رمان|برتقال|ليمون|موز|مانجا|خوخ|مشمش|كرز|تين|جريب|grape|apple|pear|strawberry|orange|lemon|banana|mango|cherry|peach|apricot|fig|kiwi|melon|watermelon|pineapple)/.test(t)},
+  {key:"vegetables", ar:"خضار", test:(t)=>/(طماطم|خيار|كوسا|بطاطس|باذنجان|جزر|بصل|ثوم|فلفل|خس|ملفوف|قرنبيط|بروكلي|tomato|cucumber|zucchini|potato|eggplant|carrot|onion|garlic|pepper|lettuce|cabbage|cauliflower|broccoli)/.test(t)},
+  {key:"grains", ar:"حبوب ومخبوزات", test:(t)=>/(قمح|جلوتين|شعير|ارز|أرز|ذره|ذرة|شوفان|جاودار|رز|wheat|gluten|barley|rice|corn|maize|oat|rye)/.test(t)},
+  {key:"legumes", ar:"بقوليات", test:(t)=>/(عدس|حمص|بازلاء|فول|فاصوليا|لوبيا|صويا|lentil|chickpea|pea|beans|soy|soya)/.test(t)},
+  {key:"nuts", ar:"مكسرات وبذور", test:(t)=>/(لوز|فستق|فول سوداني|كاجو|بندق|جوز|صنوبر|سمسم|almond|pistachio|peanut|cashew|hazelnut|walnut|pine nut|sesame|seed)/.test(t)},
+  {key:"beverages", ar:"مشروبات", test:(t)=>/(قهوه|قهوة|شاي|كاكاو|عصير|مشروب|coffee|tea|cocoa|juice|drink)/.test(t)}
+];
 
-let currentLang = "ar";
+const quickExamples = ["جبنة بوك","حليب السعودية","لبن المراعي","صفار البيض","بيض","موزاريلا","فول سوداني","قمح","روبيان","لوز","سالمون","طماطم"];
+
+let activeTab = "search";
+let lastMatches = [];
+let currentCategory = "all";
+
 const $ = id => document.getElementById(id);
-
-function currentText(){ return texts[currentLang]; }
 
 function normalizeText(text){
   return String(text || "").trim().toLowerCase().normalize("NFKD")
@@ -158,66 +351,45 @@ function normalizeText(text){
     .replace(/[’´`]/g,"'").replace(/[^a-z0-9\u0600-\u06FF\s]+/g," ").replace(/\s+/g," ").trim();
 }
 
-function buildAliases(item){
-  const ar = normalizeText(item.ar), en = normalizeText(item.en);
-  const aliases = new Set([ar, en, normalizeText(item.code)]);
-  [ar, en].forEach(s => s.split(" ").forEach(p => p && aliases.add(p)));
-  if(ar){
-    aliases.add(ar.replace("حليب ","")); aliases.add(ar.replace("لحم ","")); aliases.add(ar.replace("بذور ",""));
-    aliases.add(ar.replace("سمك ","")); aliases.add(ar.replace("جبنه ","")); aliases.add(ar.replace("جبن ",""));
+function levenshtein(a,b){
+  a = normalizeText(a).replace(/\s+/g,'');
+  b = normalizeText(b).replace(/\s+/g,'');
+  if(!a) return b.length;
+  if(!b) return a.length;
+  const dp = Array.from({length:b.length+1}, (_,i)=>i);
+  for(let i=1;i<=a.length;i++) {
+    let prev = i-1;
+    dp[0] = i;
+    for(let j=1;j<=b.length;j++) {
+      const temp = dp[j];
+      dp[j] = Math.min(dp[j]+1, dp[j-1]+1, prev + (a[i-1]===b[j-1] ? 0 : 1));
+      prev = temp;
+    }
   }
-  if(en){
-    aliases.add(en.replace("milk ","")); aliases.add(en.replace("cheese ","")); aliases.add(en.replace("seed ",""));
-    aliases.add(en.replace("fish ",""));
-  }
-  Object.entries(manualAliases).forEach(([core, vals]) => {
-    const all = [normalizeText(core), ...vals.map(normalizeText)];
-    if (all.some(v => v && (ar.includes(v) || en.includes(v)))) all.forEach(v => aliases.add(v));
-  });
-  return [...aliases].filter(Boolean);
+  return dp[b.length];
 }
 
-const indexedFoods = foods.map(item => ({...item, aliases: buildAliases(item)}));
+function detectCategory(item){
+  const txt = normalizeText(item.ar + ' ' + item.en);
+  const found = CATEGORY_RULES.find(rule => rule.test(txt));
+  return found ? found.key : "other";
+}
 
-function severityInfo(cls){
-  if(cls >= 5) return {reaction: currentText().yes, strength: currentText().strong, tone:"red", icon:"🚨"};
-  if(cls >= 3) return {reaction: currentText().yes, strength: currentText().medium, tone:"amber", icon:"⚠️"};
-  if(cls >= 1) return {reaction: currentText().slight, strength: currentText().weak, tone:"green", icon:"🔎"};
-  return {reaction: currentText().no, strength: currentText().low, tone:"blue", icon:"✅"};
+function getCategoryName(key){
+  if(key === "all") return "كل الأنواع";
+  const f = CATEGORY_RULES.find(x => x.key === key);
+  return f ? f.ar : "أخرى";
 }
 
 function classRange(cls){
   return {6:">=100",5:">=50 - <100",4:">=17.5 - <50",3:">=3.5 - <17.5",2:">=0.7 - <3.5",1:">=0.35 - <0.7",0:"<0.35"}[cls] || "";
 }
 
-function scoreItem(query, item){
-  const q = normalizeText(query);
-  if(!q) return 0;
-  let best = 0;
-  for(const alias of item.aliases){
-    if(alias === q) best = Math.max(best, 1000);
-    else if(alias.startsWith(q)) best = Math.max(best, 900 - (alias.length - q.length));
-    else if(alias.includes(q) || q.includes(alias)) best = Math.max(best, 700 - Math.abs(alias.length - q.length));
-  }
-  if(best === 0){
-    const qCompact = q.replace(/\s+/g,'');
-    for(const alias of item.aliases){
-      const aCompact = alias.replace(/\s+/g,'');
-      if(aCompact === qCompact) best = Math.max(best, 850);
-      else if(aCompact.startsWith(qCompact) || qCompact.startsWith(aCompact)) best = Math.max(best, 650);
-    }
-  }
-  return best + item.class;
-}
-
-function findMatches(query, limit=12){
-  const rows = indexedFoods
-    .map(item => ({item, score: scoreItem(query, item)}))
-    .filter(x => x.score > 0)
-    .sort((a,b) => b.score - a.score || b.item.class - a.item.class || a.item.en.localeCompare(b.item.en))
-    .slice(0, limit)
-    .map(x => x.item);
-  return rows;
+function severityInfo(cls){
+  if(cls >= 5) return {reaction:"نعم، مرتفع", strength:"خطر مرتفع", tone:"red", icon:"🚨"};
+  if(cls >= 3) return {reaction:"نعم، متوسط", strength:"خطر متوسط", tone:"amber", icon:"⚠️"};
+  if(cls >= 1) return {reaction:"استجابة خفيفة", strength:"خطر خفيف", tone:"green", icon:"🔎"};
+  return {reaction:"آمن غالباً", strength:"أكثر أماناً", tone:"blue", icon:"✅"};
 }
 
 function tonePill(cls){
@@ -225,114 +397,551 @@ function tonePill(cls){
   return `<span class="pill ${s.tone}">${s.icon} ${s.strength}</span>`;
 }
 
-function bannerHtml(cls){
-  const t = currentText();
-  const s = severityInfo(cls);
-  const m = {red:t.bannerStrong, amber:t.bannerMedium, green:t.bannerWeak, blue:t.bannerLow}[s.tone];
-  return `<div class="alert ${s.tone}"><div style="font-size:1.25rem">${s.icon}</div><div>${m}</div></div>`;
+function buildAliases(item){
+  const ar = normalizeText(item.ar), en = normalizeText(item.en);
+  const aliases = new Set([ar, en, normalizeText(item.code)]);
+  [ar, en].forEach(s => s.split(" ").forEach(p => p && aliases.add(p)));
+  if(ar){
+    aliases.add(ar.replace("حليب ","")); aliases.add(ar.replace("لحم ","")); aliases.add(ar.replace("بذور ",""));
+    aliases.add(ar.replace("سمك ","")); aliases.add(ar.replace("جبنه ","")); aliases.add(ar.replace("جبنة ","")); aliases.add(ar.replace("جبن ",""));
+  }
+  if(en){
+    aliases.add(en.replace("milk ","")); aliases.add(en.replace("cheese ","")); aliases.add(en.replace("seed ","")); aliases.add(en.replace("fish ",""));
+  }
+  return [...aliases].filter(Boolean);
 }
 
-function renderResult(item){
-  const t = currentText();
-  const s = severityInfo(item.class);
+const indexedFoods = foods.map(item => ({
+  ...item,
+  category: detectCategory(item),
+  aliases: buildAliases(item)
+}));
+
+function resolveProductQuery(query){
+  const q = normalizeText(query);
+  let best = null;
+  for (const rule of PRODUCT_ALIAS_RULES) {
+    const hit = rule.keywords.some(k => q.includes(normalizeText(k)));
+    if(hit) {
+      const refs = (FAMILY_MAP[rule.family] || [])
+        .map(name => indexedFoods.find(x => normalizeText(x.en) === normalizeText(name)))
+        .filter(Boolean);
+      if(refs.length) {
+        const primary = refs.slice().sort((a,b)=> b.class - a.class || a.en.localeCompare(b.en))[0];
+        best = {
+          queryType: "product",
+          label: rule.label,
+          confidence: q === normalizeText(rule.keywords[0]) ? "عالٍ" : "متوسط",
+          family: rule.family,
+          refs,
+          primary
+        };
+        break;
+      }
+    }
+  }
+
+  if(!best) {
+    const typeHints = [
+      {test:/(جبن|جبنه|جبنة|cheese)/, family:"creamCheese", label:"جبن / جبنة"},
+      {test:/(حليب|milk)/, family:"cowMilk", label:"حليب"},
+      {test:/(لبن|زبادي|yogurt|yoghurt|labneh|لبنه|لبنة)/, family:"yogurt", label:"لبن / زبادي"},
+      {test:/(بيض|egg)/, family:"egg", label:"بيض"},
+      {test:/(فول سوداني|peanut)/, family:"peanut", label:"فول سوداني"},
+      {test:/(لوز|almond)/, family:"almond", label:"لوز"},
+      {test:/(سمسم|sesame)/, family:"sesame", label:"سمسم"},
+      {test:/(قمح|جلوتين|wheat|gluten)/, family:"wheat", label:"قمح / جلوتين"}
+    ];
+    const hint = typeHints.find(x => x.test.test(q));
+    if(hint){
+      const refs = (FAMILY_MAP[hint.family] || []).map(name => indexedFoods.find(x => normalizeText(x.en) === normalizeText(name))).filter(Boolean);
+      if(refs.length) {
+        const primary = refs.slice().sort((a,b)=> b.class - a.class || a.en.localeCompare(b.en))[0];
+        best = {
+          queryType: "product",
+          label: hint.label,
+          confidence: BRAND_HINTS.some(b => q.includes(normalizeText(b))) ? "متوسط" : "منخفض",
+          family: hint.family,
+          refs,
+          primary
+        };
+      }
+    }
+  }
+  return best;
+}
+
+function scoreItem(query, item){
+  const q = normalizeText(query);
+  if(!q) return 0;
+  let best = 0;
+  for(const alias of item.aliases){
+    if(alias === q) best = Math.max(best, 1200);
+    else if(alias.startsWith(q)) best = Math.max(best, 1000 - Math.max(alias.length - q.length, 0));
+    else if(alias.includes(q) || q.includes(alias)) best = Math.max(best, 820 - Math.abs(alias.length - q.length));
+    else {
+      const d = levenshtein(alias, q);
+      if(d <= 1) best = Math.max(best, 920 - d*60);
+      else if(d <= 2 && Math.min(alias.length, q.length) >= 4) best = Math.max(best, 780 - d*50);
+      else if(d <= 3 && Math.min(alias.length, q.length) >= 6) best = Math.max(best, 650 - d*35);
+    }
+  }
+  return best + item.class*2;
+}
+
+function bySeverityFilter(item){
+  const v = $("severityFilter").value;
+  if(v === "all") return true;
+  if(v === "high") return item.class >= 5;
+  if(v === "medium") return item.class >= 3 && item.class <= 4;
+  if(v === "low") return item.class >= 1 && item.class <= 2;
+  if(v === "safe") return item.class === 0;
+  return true;
+}
+
+function byCategoryFilter(item){
+  const c = $("categoryFilter").value;
+  return c === "all" || item.category === c;
+}
+
+function searchFoods(query, limit=18){
+  return indexedFoods
+    .filter(byCategoryFilter)
+    .filter(bySeverityFilter)
+    .map(item => ({item, score: scoreItem(query, item)}))
+    .filter(x => x.score > 0)
+    .sort((a,b) => b.score - a.score || b.item.class - a.item.class || a.item.en.localeCompare(b.item.en))
+    .slice(0, limit)
+    .map(x => x.item);
+}
+
+function bannerHtml(cls){
+  const s = severityInfo(cls);
+  const msg = {
+    red:"هذا العنصر مصنف ضمن الفئات الأعلى خطراً، ويستحق تجنباً شديداً أو مراجعة دقيقة.",
+    amber:"هذا العنصر لديه قابلية تفاعل متوسطة، فانتبه عند استخدامه أو عند وجوده في المكونات.",
+    green:"قد يسبب استجابة خفيفة لدى بعض الحالات، لذلك راقب الكمية والتكرار.",
+    blue:"هذا العنصر يظهر ضمن الفئة الأقل تفاعلاً في قاعدة البيانات الحالية."
+  }[s.tone];
+  return `<div class="banner ${s.tone}"><div style="font-size:1.2rem">${s.icon}</div><div>${msg}</div></div>`;
+}
+
+function renderProductEstimate(productResult){
+  const p = productResult.primary;
+  const refs = productResult.refs.slice().sort((a,b)=>b.class-a.class);
+  const worst = refs[0];
+  $("resultPills").innerHTML = `
+    <span class="pill gray">🧠 تقدير ذكي لاسم منتج</span>
+    <span class="pill blue">🏷️ ${productResult.label}</span>
+    <span class="pill blue">🎯 الثقة: ${productResult.confidence}</span>
+    ${tonePill(worst.class)}
+  `;
   $("resultArea").innerHTML = `
-    <div class="status">
-      ${tonePill(item.class)}
-      <span class="pill blue">🧾 ${t.classLabel} ${item.class}</span>
-      <span class="pill blue">📈 ${t.valueLabel} ${item.ku_l}</span>
-    </div>
-    <div class="title">
-      <div>
-        <h2>${currentLang === "ar" ? item.ar : item.en}</h2>
-        <p class="sub">${currentLang === "ar" ? item.en : item.ar}</p>
+    <div class="resultHero">
+      <div class="resultTitle">
+        <div>
+          <h2>تحليل تقديري للمنتج التجاري</h2>
+          <p class="sub">تم تفسير الاسم التجاري وربطه بأقرب مادة/عائلة غذائية موجودة في قاعدة الحساسية.</p>
+        </div>
+        <div>${tonePill(worst.class)}</div>
       </div>
-      <span class="pill ${s.tone}">${s.reaction}</span>
-    </div>
-    ${bannerHtml(item.class)}
-    <div class="metrics">
-      <div class="metric"><div class="label">${t.arabicName}</div><div class="value">${item.ar}</div></div>
-      <div class="metric"><div class="label">${t.englishName}</div><div class="value">${item.en}</div></div>
-      <div class="metric"><div class="label">${t.strength}</div><div class="value">${s.strength}</div></div>
-      <div class="metric"><div class="label">${t.reaction}</div><div class="value">${s.reaction}</div></div>
-      <div class="metric"><div class="label">${t.rangeLabel}</div><div class="value">${classRange(item.class)}</div></div>
-      <div class="metric"><div class="label">${t.codeLabel}</div><div class="value">${item.code}</div></div>
+      ${bannerHtml(worst.class)}
+      <div class="metricGrid">
+        <div class="miniCard"><div class="label">أقرب عائلة مرجعية</div><div class="value">${productResult.label}</div></div>
+        <div class="miniCard"><div class="label">المرجع الأكثر خطراً داخل العائلة</div><div class="value">${worst.ar} / ${worst.en}</div></div>
+        <div class="miniCard"><div class="label">أعلى تصنيف داخل العائلة</div><div class="value">Class ${worst.class} · ${classRange(worst.class)}</div></div>
+        <div class="miniCard"><div class="label">مستوى الثقة</div><div class="value">${productResult.confidence}</div></div>
+      </div>
+      <div class="note">
+        <strong>العناصر المرجعية المستخدمة:</strong><br>
+        ${refs.map(x => `• ${x.ar} / ${x.en} — Class ${x.class}`).join("<br>")}
+      </div>
+      <div class="confidence">هذه النتيجة تقديرية لأنها مبنية على نوع المنتج واسمه التجاري، وليست على قراءة مكونات العبوة الفعلية أو الباركود.</div>
+    </div>`;
+}
+
+function renderFoodResult(item){
+  const s = severityInfo(item.class);
+  $("resultPills").innerHTML = `
+    ${tonePill(item.class)}
+    <span class="pill blue">🧾 Class ${item.class}</span>
+    <span class="pill blue">📈 ${item.ku_l}</span>
+    <span class="pill gray">🏷️ ${getCategoryName(item.category)}</span>
+  `;
+  $("resultArea").innerHTML = `
+    <div class="resultHero">
+      <div class="resultTitle">
+        <div>
+          <h2>${item.ar}</h2>
+          <p class="sub">${item.en}</p>
+        </div>
+        <div class="pill ${s.tone}">${s.reaction}</div>
+      </div>
+      ${bannerHtml(item.class)}
+      <div class="metricGrid">
+        <div class="miniCard"><div class="label">الاسم العربي</div><div class="value">${item.ar}</div></div>
+        <div class="miniCard"><div class="label">الاسم الإنجليزي</div><div class="value">${item.en}</div></div>
+        <div class="miniCard"><div class="label">التصنيف</div><div class="value">Class ${item.class}</div></div>
+        <div class="miniCard"><div class="label">المدى</div><div class="value">${classRange(item.class)}</div></div>
+        <div class="miniCard"><div class="label">القيمة</div><div class="value">${item.ku_l}</div></div>
+        <div class="miniCard"><div class="label">النوع</div><div class="value">${getCategoryName(item.category)}</div></div>
+      </div>
     </div>`;
 }
 
 function renderMatches(items){
-  const t = currentText();
-  if(!items.length) {
-    $("matchesList").innerHTML = `<div class="empty">${t.notFound}</div>`;
+  $("resultsCount").textContent = `${items.length} نتيجة`;
+  if(!items.length){
+    $("matchesList").innerHTML = `<div class="empty">لا توجد نتائج مطابقة بالفلتر الحالي. جرّب إزالة بعض الكلمات أو تغيير النوع.</div>`;
+    $("typePills").innerHTML = "";
+    return;
+  }
+  const counts = new Map();
+  items.forEach(x => counts.set(x.category, (counts.get(x.category)||0)+1));
+  $("typePills").innerHTML = [...counts.entries()].map(([k,v]) => `<button class="pillFilter ${k===currentCategory?'active':''}" data-cat="${k}">${getCategoryName(k)} · ${v}</button>`).join("") + `<button class="pillFilter ${currentCategory==='all'?'active':''}" data-cat="all">كل المطابقات · ${items.length}</button>`;
+  document.querySelectorAll(".pillFilter").forEach(btn => btn.onclick = () => {
+    currentCategory = btn.dataset.cat;
+    const base = currentCategory === "all" ? lastMatches : lastMatches.filter(x => x.category === currentCategory);
+    renderMatchesList(base);
+    document.querySelectorAll(".pillFilter").forEach(b => b.classList.toggle('active', b.dataset.cat === currentCategory));
+  });
+  renderMatchesList(currentCategory === "all" ? items : items.filter(x => x.category === currentCategory));
+}
+
+function renderMatchesList(items){
+  if(!items.length){
+    $("matchesList").innerHTML = `<div class="empty">لا توجد عناصر ضمن هذا النوع حالياً.</div>`;
     return;
   }
   $("matchesList").innerHTML = items.map(item => `
     <div class="row" data-code="${item.code}">
       <div class="main">
-        <div><strong>${currentLang === "ar" ? item.ar : item.en}</strong></div>
+        <div><strong>${item.ar}</strong><div class="small">${item.en}</div></div>
         ${tonePill(item.class)}
       </div>
-      <div class="sub">${currentLang === "ar" ? item.en : item.ar} · Class ${item.class} · ${item.ku_l}</div>
+      <div class="meta">النوع: ${getCategoryName(item.category)} · Class ${item.class} · ${item.ku_l}</div>
     </div>`).join("");
-  document.querySelectorAll(".row").forEach(el => {
-    el.onclick = () => {
-      const item = indexedFoods.find(x => x.code === el.dataset.code);
-      if(item) renderResult(item);
-    };
+  document.querySelectorAll(".row").forEach(el => el.onclick = () => {
+    const item = indexedFoods.find(x => x.code === el.dataset.code);
+    if(item) renderFoodResult(item);
   });
-}
-
-function renderEmpty(){
-  $("resultArea").innerHTML = `<div class="empty">🍽️ ${currentText().noQuery}</div>`;
-  $("matchesList").innerHTML = `<div class="empty">${currentText().similarHint}</div>`;
-}
-
-function renderQuick(){
-  $("quickChips").innerHTML = currentText().searchExamples.map(w => `<button class="chip" data-word="${w}">${w}</button>`).join("");
-  document.querySelectorAll(".chip").forEach(btn => {
-    btn.onclick = () => { $("searchInput").value = btn.dataset.word; runSearch(); };
-  });
-}
-
-function setLanguage(lang){
-  currentLang = lang;
-  document.documentElement.lang = lang === "ar" ? "ar" : "en";
-  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-  $("arBtn").classList.toggle("active", lang === "ar");
-  $("enBtn").classList.toggle("active", lang === "en");
-  const t = currentText();
-  $("heroTitle").textContent = t.heroTitle;
-  $("heroSub").textContent = t.heroSub;
-  $("searchInput").placeholder = t.searchPlaceholder;
-  $("searchBtn").textContent = t.searchBtn;
-  $("clearBtn").textContent = t.clearBtn;
-  $("helperText").textContent = t.helperText;
-  $("suggestTitle").textContent = t.suggestTitle;
-  $("matchTitle").textContent = t.matchTitle;
-  $("footerText").textContent = t.footerText;
-  renderQuick();
-  renderEmpty();
 }
 
 function runSearch(){
-  const q = $("searchInput").value.trim();
-  if(!q) { renderEmpty(); return; }
-  const results = findMatches(q);
-  if(!results.length) {
-    $("resultArea").innerHTML = `<div class="empty">❌ ${currentText().notFound}</div>`;
+  currentCategory = "all";
+  const query = $("searchInput").value.trim();
+  if(!query){
+    $("resultPills").innerHTML = "";
+    $("resultArea").innerHTML = `<div class="empty">🍽️ اكتب اسم طعام أو منتج غذائي، وسأحاول تحديد مستوى الأمان لك.</div>`;
     $("matchesList").innerHTML = "";
+    $("resultsCount").textContent = "0 نتيجة";
+    $("typePills").innerHTML = "";
     return;
   }
-  renderResult(results[0]);
+  const productEstimate = resolveProductQuery(query);
+  const results = searchFoods(query);
+  lastMatches = results;
+  if(productEstimate) renderProductEstimate(productEstimate);
+  else if(results[0]) renderFoodResult(results[0]);
+  else {
+    $("resultPills").innerHTML = "";
+    $("resultArea").innerHTML = `<div class="empty">❌ لم أجد مطابقات مباشرة. جرّب كتابة نوع المنتج مثل: حليب، جبنة، لبن، بيض، أو اسم المادة نفسها.</div>`;
+  }
   renderMatches(results);
 }
 
+function buildCategoryOptions(){
+  const opts = [`<option value="all">كل الأنواع</option>`]
+    .concat(CATEGORY_RULES.map(x => `<option value="${x.key}">${x.ar}</option>`))
+    .concat(`<option value="other">أخرى</option>`);
+  $("categoryFilter").innerHTML = opts.join("");
+}
+
+function renderQuickChips(){
+  $("quickChips").innerHTML = quickExamples.map(word => `<button class="chip" data-word="${word}">${word}</button>`).join("");
+  document.querySelectorAll(".chip").forEach(btn => btn.onclick = () => {
+    $("searchInput").value = btn.dataset.word;
+    runSearch();
+  });
+}
+
+function getFilteredFoods(){
+  return indexedFoods.filter(byCategoryFilter).filter(bySeverityFilter);
+}
+
+function renderTopList(el, items){
+  el.innerHTML = items.map(item => `
+    <div class="foodLine">
+      <div>
+        <strong>${item.ar}</strong>
+        <div class="small">${item.en} · ${getCategoryName(item.category)}</div>
+      </div>
+      <div>${tonePill(item.class)}</div>
+    </div>`).join("") || `<div class="empty">لا توجد عناصر ضمن الفلتر الحالي.</div>`;
+}
+
+function renderAnalysis(){
+  const rows = getFilteredFoods();
+  const total = rows.length;
+  const high = rows.filter(x => x.class >= 5).length;
+  const med = rows.filter(x => x.class >= 3 && x.class <= 4).length;
+  const low = rows.filter(x => x.class >= 1 && x.class <= 2).length;
+  const safe = rows.filter(x => x.class === 0).length;
+  const avg = total ? (rows.reduce((a,b)=>a+b.class,0) / total).toFixed(2) : "0.00";
+  const worst = rows.slice().sort((a,b)=>b.class-a.class || a.ar.localeCompare(b.ar)).slice(0,8);
+  const safest = rows.filter(x=>x.class===0).slice().sort((a,b)=>a.ar.localeCompare(b.ar)).slice(0,8);
+
+  $("overviewStats").innerHTML = `
+    <div class="stat"><div class="label">إجمالي العناصر المعروضة</div><div class="value">${total}</div></div>
+    <div class="stat"><div class="label">متوسط مستوى الحساسية</div><div class="value">${avg}</div></div>
+    <div class="stat"><div class="label">النوع الحالي</div><div class="value">${getCategoryName($("categoryFilter").value)}</div></div>
+    <div class="stat"><div class="label">فلتر الخطورة</div><div class="value">${ $("severityFilter").selectedOptions[0].textContent }</div></div>
+  `;
+
+  $("severityStats").innerHTML = `
+    <div class="stat"><div class="label">خطر مرتفع</div><div class="value">${high}</div></div>
+    <div class="stat"><div class="label">خطر متوسط</div><div class="value">${med}</div></div>
+    <div class="stat"><div class="label">خطر خفيف</div><div class="value">${low}</div></div>
+    <div class="stat"><div class="label">الأكثر أماناً</div><div class="value">${safe}</div></div>
+  `;
+
+  renderTopList($("mostDangerous"), worst);
+  renderTopList($("mostSafe"), safest);
+
+  const catStats = CATEGORY_RULES.map(rule => {
+    const subset = indexedFoods.filter(x => x.category === rule.key);
+    if(!subset.length) return null;
+    const avg = (subset.reduce((a,b)=>a+b.class,0)/subset.length).toFixed(2);
+    const maxItem = subset.slice().sort((a,b)=>b.class-a.class)[0];
+    const minItem = subset.slice().sort((a,b)=>a.class-b.class)[0];
+    return {rule, count:subset.length, avg, maxItem, minItem};
+  }).filter(Boolean).sort((a,b)=>parseFloat(b.avg)-parseFloat(a.avg));
+
+  $("categoryAnalysis").innerHTML = catStats.slice(0,8).map(x => `
+    <div class="stat">
+      <div class="label">${x.rule.ar}</div>
+      <div class="value">
+        عدد العناصر: ${x.count}<br>
+        متوسط الفئة: ${x.avg}<br>
+        الأعلى: ${x.maxItem.ar} (Class ${x.maxItem.class})<br>
+        الأقل: ${x.minItem.ar} (Class ${x.minItem.class})
+      </div>
+    </div>`).join("");
+}
+
+function setTab(tab){
+  activeTab = tab;
+  $("tabSearch").classList.toggle("active", tab === "search");
+  $("tabAnalysis").classList.toggle("active", tab === "analysis");
+  $("searchView").classList.toggle("hidden", tab !== "search");
+  $("analysisView").classList.toggle("hidden", tab !== "analysis");
+  if(tab === "analysis") renderAnalysis();
+}
+
+
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]));
+}
+
+function getApiUrl(){
+  const cfg = window.APP_CONFIG || {};
+  return (cfg.apiBaseUrl || '').trim();
+}
+
+function getDailyLimit(){
+  const cfg = window.APP_CONFIG || {};
+  return Number(cfg.dailySearchLimit || 25);
+}
+
+function getTodayKey(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function getUsageState(){
+  try {
+    const raw = localStorage.getItem('online_lookup_usage_v1');
+    const parsed = raw ? JSON.parse(raw) : {};
+    const today = getTodayKey();
+    if(parsed.date !== today) return { date: today, count: 0 };
+    return { date: today, count: Number(parsed.count || 0) };
+  } catch {
+    return { date: getTodayKey(), count: 0 };
+  }
+}
+
+function saveUsageState(state){
+  try {
+    localStorage.setItem('online_lookup_usage_v1', JSON.stringify(state));
+  } catch {}
+}
+
+function getRemainingSearches(){
+  const state = getUsageState();
+  return Math.max(0, getDailyLimit() - state.count);
+}
+
+function getCurrentLocalContext(query){
+  const productEstimate = resolveProductQuery(query);
+  const matches = searchFoods(query).slice(0, 6).map(item => ({
+    ar: item.ar, en: item.en, category: item.category, class: item.class, ku_l: item.ku_l
+  }));
+  return {
+    productEstimate: productEstimate ? {
+      type: productEstimate.type,
+      label: productEstimate.label,
+      confidence: productEstimate.confidence,
+      worstClass: productEstimate?.worst?.class ?? null,
+      references: (productEstimate.references || []).map(x => ({ ar: x.ar, en: x.en, class: x.class }))
+    } : null,
+    localMatches: matches
+  };
+}
+
+function renderOnlineResult(data){
+  // إذا كانت النتيجة نصية، نحاول أولاً استخراج JSON منها إن وجد
+  if(typeof data === 'string'){
+    const cleanedText = String(data || '').trim();
+
+    // إذا رجعت أقواس فقط أو نتيجة فارغة، اعرض رسالة مفهومة
+    if(!cleanedText || cleanedText === '{' || cleanedText === '}' || cleanedText === '{}' || cleanedText === '[]'){
+      $('onlineResult').innerHTML = `
+        <div class="note">
+          <div class="pills">
+            <span class="pill amber">🤖 نتيجة غير مكتملة</span>
+          </div>
+          <div style="margin-top:12px;line-height:1.95">الخدمة رجّعت نتيجة غير قابلة للعرض. جرّب مرة أخرى أو استخدم اسم منتج أوضح.</div>
+          <div class="confidence">تم تجاهل استجابة غير مكتملة من خدمة التحليل الأونلاين.</div>
+        </div>`;
+      return;
+    }
+
+    // محاولة استخراج JSON من داخل النص أو من code fences
+    const candidate = cleanedText
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```$/i, '')
+      .trim();
+
+    const firstBrace = candidate.indexOf('{');
+    const lastBrace = candidate.lastIndexOf('}');
+    if(firstBrace !== -1 && lastBrace > firstBrace){
+      const maybeJson = candidate.slice(firstBrace, lastBrace + 1);
+      try {
+        const parsed = JSON.parse(maybeJson);
+        return renderOnlineResult(parsed);
+      } catch(e) {}
+    }
+
+    $('onlineResult').innerHTML = `
+      <div class="note">
+        <div class="pills">
+          <span class="pill blue">🤖 نتيجة التحليل</span>
+        </div>
+        <div style="margin-top:12px;line-height:1.95;white-space:pre-wrap">${escapeHtml(cleanedText)}</div>
+        <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
+      </div>`;
+    return;
+  }
+
+  const safeData = data && typeof data === 'object' ? data : {};
+  const verdictTone = safeData.verdict === 'غير آمن' ? 'red' : safeData.verdict === 'يحتاج تحقق' ? 'amber' : 'green';
+  const ingredients = Array.isArray(safeData.ingredients) ? safeData.ingredients.map(x => `<span class="pill gray">${escapeHtml(x)}</span>`).join(' ') : '';
+  const flags = Array.isArray(safeData.flaggedAllergens) ? safeData.flaggedAllergens.map(x => `<span class="pill red">${escapeHtml(x)}</span>`).join(' ') : '';
+  const sources = Array.isArray(safeData.sources) ? safeData.sources.map(src => `
+    <div class="sourceItem">
+      <div><a href="${escapeHtml(src.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(src.title || src.url)}</a></div>
+      <div class="small">${escapeHtml(src.url)}</div>
+    </div>`).join('') : '';
+
+  $('onlineResult').innerHTML = `
+    <div class="note">
+      <div class="pills">
+        <span class="pill ${verdictTone}">🤖 ${escapeHtml(safeData.verdict || 'غير محدد')}</span>
+        <span class="pill blue">🎯 الثقة: ${escapeHtml(safeData.confidence || 'غير محددة')}</span>
+      </div>
+      <div style="margin-top:12px;line-height:1.9"><strong>السبب:</strong> ${escapeHtml(safeData.reason || safeData.reasoning || 'لا يوجد تفسير.')}</div>
+      ${flags ? `<div style="margin-top:12px"><strong>المكونات الحساسة المكتشفة:</strong><div class="quick" style="margin-top:8px">${flags}</div></div>` : ''}
+      ${ingredients ? `<div style="margin-top:12px"><strong>المكونات المستخرجة:</strong><div class="quick" style="margin-top:8px">${ingredients}</div></div>` : ''}
+      <div class="confidence">${escapeHtml(safeData.note || 'تحقق دائماً من ملصق العبوة الحالية لأن التركيبات قد تتغير.')}</div>
+      ${sources ? `<div class="sources"><strong>المصادر:</strong>${sources}</div>` : ''}
+    </div>`;
+}
+
+
+async function runOnlineLookup(){
+  const query = $('searchInput').value.trim();
+  if(!query){
+    $('onlineStatus').textContent = 'اكتب اسم المنتج أولاً.';
+    return;
+  }
+  const apiUrl = getApiUrl();
+  const remaining = getRemainingSearches();
+  if(remaining <= 0){
+    $('onlineStatus').textContent = `وصلت للحد اليومي للبحث الأونلاين (${getDailyLimit()} طلب في هذا الجهاز). يعود العداد تلقائياً غداً.`;
+    $('onlineResult').innerHTML = '<div class="note">يمكنك الاستمرار في البحث المحلي داخل التطبيق، أو رفع الحد من ملف <code>config.js</code>.</div>';
+    return;
+  }
+  if(!apiUrl){
+    $('onlineStatus').innerHTML = 'أضف رابط الـ API داخل <code>config.js</code> أو استخدم نسخة Vercel المرفقة.';
+    return;
+  }
+  $('onlineStatus').innerHTML = '<span class="spinner"></span> جارٍ البحث أونلاين وتحليل المكونات...';
+  $('onlineResult').innerHTML = '';
+  try {
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query,
+        localContext: getCurrentLocalContext(query)
+      })
+    });
+    const data = await res.json();
+
+    if(!res.ok) throw new Error(data?.error || data?.details || 'فشل الاتصال بالـ API');
+
+    const payload = (data && Object.prototype.hasOwnProperty.call(data, 'result')) ? data.result : data;
+    if(payload === undefined || payload === null){
+      throw new Error('الخدمة لم ترجع نتيجة قابلة للعرض');
+    }
+
+    const state = getUsageState();
+    state.count += 1;
+    saveUsageState(state);
+    $('onlineStatus').textContent = `تم إكمال التحليل الأونلاين بنجاح. المتبقي اليوم: ${getRemainingSearches()} من ${getDailyLimit()}.`;
+    renderOnlineResult(payload);
+  } catch (err) {
+    $('onlineStatus').textContent = `تعذر تنفيذ البحث الأونلاين: ${err.message}`;
+    $('onlineResult').innerHTML = '<div class="note">تأكد من نشر المشروع على Vercel وإضافة مفتاح Gemini في متغيرات البيئة باسم <code>GEMINI_API_KEY</code>.</div>';
+  }
+}
+function registerSW(){
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  }
+}
+
 window.addEventListener("DOMContentLoaded", () => {
-  $("arBtn").onclick = () => setLanguage("ar");
-  $("enBtn").onclick = () => setLanguage("en");
+  buildCategoryOptions();
+  renderQuickChips();
+  registerSW();
   $("searchBtn").onclick = runSearch;
-  $("clearBtn").onclick = () => { $("searchInput").value = ""; renderEmpty(); $("searchInput").focus(); };
+  $("clearBtn").onclick = () => {
+    $("searchInput").value = "";
+    $("categoryFilter").value = "all";
+    $("severityFilter").value = "all";
+    currentCategory = "all";
+    runSearch();
+    renderAnalysis();
+  };
   $("searchInput").addEventListener("keydown", e => { if(e.key === "Enter") runSearch(); });
-  setLanguage("ar");
+  $("categoryFilter").addEventListener("change", () => { runSearch(); renderAnalysis(); });
+  $("severityFilter").addEventListener("change", () => { runSearch(); renderAnalysis(); });
+  $("tabSearch").onclick = () => setTab("search");
+  $("tabAnalysis").onclick = () => setTab("analysis");
+  $("onlineLookupBtn").onclick = runOnlineLookup;
+  $('onlineStatus').textContent = `المتبقي اليوم للبحث الأونلاين على هذا الجهاز: ${getRemainingSearches()} من ${getDailyLimit()}.`;
+  renderAnalysis();
 });
 </script>
 </body>
