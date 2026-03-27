@@ -4,7 +4,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ error: "Use POST request" });
     }
 
-    const { query, localContext } = req.body || {};
+    const { query } = req.body || {};
 
     if (!query || !String(query).trim()) {
       return res.status(400).json({ error: "No query provided" });
@@ -16,29 +16,29 @@ export default async function handler(req, res) {
 
     const q = String(query).trim();
 
-    // fallback محلي ذكي لو رد Gemini كان ناقص
-    function inferLocalFallback(name, ctx) {
-      const text = `${name} ${JSON.stringify(ctx || {})}`.toLowerCase();
+    // 🔥 fallback يعتمد فقط على اسم المنتج (تم إصلاح التكرار)
+    function inferLocalFallback(name) {
+      const text = String(name || "").toLowerCase();
 
       const milkWords = [
-        "milk", "dairy", "cheese", "yogurt", "laban", "labneh", "cream", "butter",
-        "حليب", "لبن", "زبادي", "جبنة", "جبن", "لبنة", "قشطة", "كريمة", "زبدة",
-        "المراعي", "بوك", "نادك", "الصافي", "السعودية"
+        "milk","dairy","cheese","yogurt","laban","labneh","cream","butter",
+        "حليب","لبن","زبادي","جبنة","جبن","لبنة","قشطة","كريمة","زبدة",
+        "المراعي","بوك","نادك","الصافي","السعودية"
       ];
 
-      const eggWords = ["egg", "بيض", "صفار البيض", "مايونيز"];
-      const peanutWords = ["peanut", "فول سوداني"];
-      const nutWords = ["almond", "cashew", "pistachio", "hazelnut", "لوز", "كاجو", "فستق", "بندق"];
-      const soyWords = ["soy", "soya", "صويا", "ليسيثين الصويا"];
-      const glutenWords = ["wheat", "gluten", "barley", "rye", "قمح", "جلوتين", "شعير", "جاودار"];
-      const seafoodWords = ["shrimp", "prawn", "fish", "salmon", "tuna", "روبيان", "جمبري", "سمك", "سالمون", "تونة"];
+      const eggWords = ["egg","بيض","صفار البيض","مايونيز"];
+      const peanutWords = ["peanut","فول سوداني"];
+      const nutWords = ["almond","cashew","pistachio","hazelnut","لوز","كاجو","فستق","بندق"];
+      const soyWords = ["soy","soya","صويا"];
+      const glutenWords = ["wheat","gluten","barley","قمح","جلوتين"];
+      const seafoodWords = ["shrimp","fish","salmon","tuna","روبيان","سمك","سالمون","تونة"];
 
       const has = (arr) => arr.some(w => text.includes(w));
 
       if (has(milkWords)) {
         return {
           verdict: "غير آمن",
-          reason: "المنتج يبدو من فئة الألبان أو يحتوي غالبًا على مشتقات الحليب",
+          reason: "المنتج يبدو من الألبان أو مشتقاتها",
           ingredients: "حليب، مشتقات الألبان، لاكتوز",
           confidence: "متوسطة"
         };
@@ -47,8 +47,8 @@ export default async function handler(req, res) {
       if (has(eggWords)) {
         return {
           verdict: "غير آمن",
-          reason: "المنتج يبدو مرتبطًا بالبيض أو مشتقاته",
-          ingredients: "بيض، بروتين البيض",
+          reason: "المنتج يحتوي على البيض",
+          ingredients: "بيض",
           confidence: "متوسطة"
         };
       }
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
       if (has(peanutWords)) {
         return {
           verdict: "غير آمن",
-          reason: "المنتج يبدو مرتبطًا بالفول السوداني",
+          reason: "يحتوي على فول سوداني",
           ingredients: "فول سوداني",
           confidence: "مرتفعة"
         };
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
       if (has(nutWords)) {
         return {
           verdict: "غير آمن",
-          reason: "المنتج يبدو مرتبطًا بالمكسرات",
+          reason: "يحتوي على مكسرات",
           ingredients: "مكسرات",
           confidence: "متوسطة"
         };
@@ -74,7 +74,7 @@ export default async function handler(req, res) {
       if (has(soyWords)) {
         return {
           verdict: "يحتاج تحقق",
-          reason: "قد يحتوي على الصويا أو أحد مشتقاتها",
+          reason: "قد يحتوي على صويا",
           ingredients: "صويا",
           confidence: "منخفضة"
         };
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
       if (has(glutenWords)) {
         return {
           verdict: "يحتاج تحقق",
-          reason: "قد يحتوي على القمح أو الجلوتين",
+          reason: "قد يحتوي على جلوتين",
           ingredients: "قمح، جلوتين",
           confidence: "منخفضة"
         };
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
       if (has(seafoodWords)) {
         return {
           verdict: "غير آمن",
-          reason: "المنتج يبدو من المأكولات البحرية أو مشتقاتها",
+          reason: "يحتوي على مأكولات بحرية",
           ingredients: "أسماك أو قشريات",
           confidence: "متوسطة"
         };
@@ -100,32 +100,25 @@ export default async function handler(req, res) {
 
       return {
         verdict: "يحتاج تحقق",
-        reason: "لم أستطع تأكيد المكونات بشكل كافٍ من الاسم وحده",
+        reason: "لم يتم تحديد المكونات بدقة من الاسم فقط",
         ingredients: "غير محددة",
         confidence: "منخفضة"
       };
     }
 
-    const compactContext = localContext
-      ? JSON.stringify(localContext).slice(0, 1600)
-      : "";
-
-    const prompt = `أنت مساعد حساسية غذائية.
+    // 🔥 برومبت مبسط بدون localContext
+    const prompt = `أنت خبير حساسية غذائية.
 
 اسم المنتج: ${q}
-${compactContext ? `سياق محلي: ${compactContext}` : ""}
 
-أجب بالعربية فقط.
-ممنوع JSON.
-ممنوع markdown.
-اكتب 4 أسطر فقط لا غير، وابدأ كل سطر كما يلي حرفيًا:
+أجب فقط بهذه الصيغة (4 أسطر فقط):
 
-الحكم: ...
-السبب: ...
-المكونات المحتملة: ...
-الثقة: ...
+الحكم: آمن أو غير آمن أو يحتاج تحقق
+السبب: جملة قصيرة
+المكونات المحتملة: حتى 3 عناصر
+الثقة: منخفضة أو متوسطة أو مرتفعة
 
-ويجب أن تكون القيم بعد النقطتين مكتملة وليست فارغة.`;
+ممنوع أي كلام إضافي.`;
 
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
@@ -143,9 +136,8 @@ ${compactContext ? `سياق محلي: ${compactContext}` : ""}
             }
           ],
           generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 140,
-            topP: 0.8
+            temperature: 0.2,
+            maxOutputTokens: 120
           }
         })
       }
@@ -153,63 +145,36 @@ ${compactContext ? `سياق محلي: ${compactContext}` : ""}
 
     const data = await response.json();
 
-    let rawText = "";
-    if (response.ok) {
-      rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
-    }
+    let rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    rawText = String(rawText || "")
-      .replace(/^```json\s*/i, "")
-      .replace(/^```\s*/i, "")
-      .replace(/```$/i, "")
-      .trim();
+    rawText = String(rawText).trim();
 
     let verdict = "";
     let reason = "";
     let ingredients = "";
     let confidence = "";
 
-    // محاولة قراءة JSON لو رجع بالغلط
-    if (rawText.startsWith("{") && rawText.endsWith("}")) {
-      try {
-        const parsed = JSON.parse(rawText);
-        verdict = parsed.verdict || parsed["الحكم"] || "";
-        reason = parsed.reason || parsed.reasoning || parsed["السبب"] || "";
-        ingredients = Array.isArray(parsed.ingredients)
-          ? parsed.ingredients.slice(0, 3).join("، ")
-          : (parsed["المكونات المحتملة"] || "");
-        confidence = parsed.confidence || parsed["الثقة"] || "";
-      } catch {}
-    }
+    const lines = rawText.split("\n").map(s => s.trim());
 
-    // محاولة استخراج الأسطر النصية
-    if (!verdict && !reason && !ingredients && !confidence && rawText) {
-      const lines = rawText
-        .replace(/\r\n/g, "\n")
-        .split("\n")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      for (const line of lines) {
-        if (line.startsWith("الحكم:")) {
-          verdict = line.replace(/^الحكم:\s*/, "").trim();
-        } else if (line.startsWith("السبب:")) {
-          reason = line.replace(/^السبب:\s*/, "").trim();
-        } else if (line.startsWith("المكونات المحتملة:")) {
-          ingredients = line.replace(/^المكونات المحتملة:\s*/, "").trim();
-        } else if (line.startsWith("الثقة:")) {
-          confidence = line.replace(/^الثقة:\s*/, "").trim();
-        }
+    for (const line of lines) {
+      if (line.startsWith("الحكم:")) {
+        verdict = line.replace("الحكم:", "").trim();
+      } else if (line.startsWith("السبب:")) {
+        reason = line.replace("السبب:", "").trim();
+      } else if (line.startsWith("المكونات المحتملة:")) {
+        ingredients = line.replace("المكونات المحتملة:", "").trim();
+      } else if (line.startsWith("الثقة:")) {
+        confidence = line.replace("الثقة:", "").trim();
       }
     }
 
-    // لو أي قيمة ناقصة، استخدم fallback محلي بدل الرد الناقص
+    // 🔥 لو Gemini لخبط → fallback
     if (!verdict || !reason || !ingredients || !confidence) {
-      const fallback = inferLocalFallback(q, localContext);
-      verdict = verdict || fallback.verdict;
-      reason = reason || fallback.reason;
-      ingredients = ingredients || fallback.ingredients;
-      confidence = confidence || fallback.confidence;
+      const fallback = inferLocalFallback(q);
+      verdict = fallback.verdict;
+      reason = fallback.reason;
+      ingredients = fallback.ingredients;
+      confidence = fallback.confidence;
     }
 
     const finalText =
@@ -219,6 +184,7 @@ ${compactContext ? `سياق محلي: ${compactContext}` : ""}
       `الثقة: ${confidence}`;
 
     return res.status(200).json({ result: finalText });
+
   } catch (error) {
     return res.status(500).json({
       error: "Internal Server Error",
