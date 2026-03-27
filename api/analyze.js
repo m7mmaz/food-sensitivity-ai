@@ -4,7 +4,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ error: "Use POST request" });
     }
 
-    const { query, localContext } = req.body || {};
+    const { query } = req.body || {};
 
     if (!query || !String(query).trim()) {
       return res.status(400).json({ error: "No query provided" });
@@ -16,212 +16,321 @@ export default async function handler(req, res) {
 
     const q = String(query).trim();
 
-    // تحويل مستوى الكلاس إلى معنى عملي
-    function verdictFromClass(maxClass) {
-      if (maxClass >= 5) return { verdict: "غير آمن", confidence: "مرتفعة" };
-      if (maxClass >= 3) return { verdict: "يحتاج تحقق", confidence: "متوسطة" };
-      return { verdict: "غالبًا آمن", confidence: "متوسطة" };
-    }
+    // قائمة المواد المحسسة/الحساسة التي نطابقها برمجيًا
+    const allergenRules = [
+      {
+        key: "الحليب",
+        words: [
+          "حليب", "لبن", "زبادي", "جبنة", "جبن", "لبنة", "قشطة", "كريمة", "زبدة",
+          "milk", "dairy", "cheese", "yogurt", "cream", "butter"
+        ]
+      },
+      {
+        key: "اللاكتوز",
+        words: ["لاكتوز", "lactose"]
+      },
+      {
+        key: "الكازين",
+        words: ["كازين", "casein", "caseinate", "sodium caseinate", "calcium caseinate"]
+      },
+      {
+        key: "مصل اللبن",
+        words: ["مصل اللبن", "شرش اللبن", "whey", "whey protein", "whey powder"]
+      },
+      {
+        key: "البيض",
+        words: [
+          "بيض", "صفار البيض", "بياض البيض", "مايونيز",
+          "egg", "eggs", "egg yolk", "egg white", "mayonnaise"
+        ]
+      },
+      {
+        key: "الصويا",
+        words: [
+          "صويا", "ليسيثين الصويا", "بروتين الصويا",
+          "soy", "soya", "soy lecithin", "soy protein"
+        ]
+      },
+      {
+        key: "الجلوتين",
+        words: ["جلوتين", "gluten"]
+      },
+      {
+        key: "القمح",
+        words: ["قمح", "سميد", "دقيق القمح", "wheat", "durum", "semolina", "wheat flour"]
+      },
+      {
+        key: "الشعير",
+        words: ["شعير", "barley", "malt", "malted barley"]
+      },
+      {
+        key: "الجاودار",
+        words: ["جاودار", "rye", "spelt"]
+      },
+      {
+        key: "الشوفان",
+        words: ["شوفان", "oat", "oats"]
+      },
+      {
+        key: "الفول السوداني",
+        words: ["فول سوداني", "peanut", "peanuts", "groundnut"]
+      },
+      {
+        key: "المكسرات",
+        words: ["مكسرات", "nuts", "tree nuts"]
+      },
+      {
+        key: "اللوز",
+        words: ["لوز", "almond", "almonds"]
+      },
+      {
+        key: "الكاجو",
+        words: ["كاجو", "cashew", "cashews"]
+      },
+      {
+        key: "الفستق",
+        words: ["فستق", "pistachio", "pistachios"]
+      },
+      {
+        key: "البندق",
+        words: ["بندق", "hazelnut", "hazelnuts"]
+      },
+      {
+        key: "الجوز",
+        words: ["جوز", "walnut", "walnuts"]
+      },
+      {
+        key: "الجوز البرازيلي",
+        words: ["جوز برازيلي", "brazil nut", "brazil nuts"]
+      },
+      {
+        key: "البقان",
+        words: ["بقان", "pecan", "pecans"]
+      },
+      {
+        key: "الصنوبر",
+        words: ["صنوبر", "pine nut", "pine nuts"]
+      },
+      {
+        key: "الماكاديميا",
+        words: ["ماكاديميا", "macadamia", "macadamia nuts"]
+      },
+      {
+        key: "السمك",
+        words: ["سمك", "سالمون", "تونة", "سردين", "fish", "salmon", "tuna", "sardine"]
+      },
+      {
+        key: "القشريات",
+        words: ["قشريات", "shrimp", "prawn", "crustacean", "crustaceans"]
+      },
+      {
+        key: "الروبيان",
+        words: ["روبيان", "جمبري", "قريدس", "shrimp", "prawn"]
+      },
+      {
+        key: "سرطان البحر",
+        words: ["سرطان البحر", "crab", "lobster"]
+      },
+      {
+        key: "المحار",
+        words: ["محار", "oyster", "oysters", "mussel", "mussels", "clam", "clams", "scallop", "squid", "octopus"]
+      },
+      {
+        key: "السمسم",
+        words: ["سمسم", "طحينة", "sesame", "tahini"]
+      },
+      {
+        key: "الخردل",
+        words: ["خردل", "mustard"]
+      },
+      {
+        key: "الكبريتيت",
+        words: ["كبريتيت", "سلفيت", "sulfite", "sulfites", "sulphite", "sulphites"]
+      },
+      {
+        key: "الذرة",
+        words: ["ذرة", "corn", "maize", "corn starch"]
+      },
+      {
+        key: "جوز الهند",
+        words: ["جوز الهند", "coconut"]
+      },
+      {
+        key: "الخميرة",
+        words: ["خميرة", "yeast", "yeast extract"]
+      }
+    ];
 
-    // تحليل سريع من نتائج التقرير المحلية المرسلة من الواجهة
-    function analyzeFromLocalContext(name, ctx) {
-      if (!ctx || typeof ctx !== "object") return null;
+    function detectAllergens(text) {
+      const haystack = String(text || "").toLowerCase();
+      const found = [];
 
-      const refs = Array.isArray(ctx?.productEstimate?.references)
-        ? ctx.productEstimate.references
-        : [];
-      const matches = Array.isArray(ctx?.localMatches) ? ctx.localMatches : [];
-
-      const candidates = [...refs, ...matches]
-        .filter(Boolean)
-        .map((x) => ({
-          ar: x.ar || "",
-          en: x.en || "",
-          class: Number(x.class || 0)
-        }));
-
-      if (!candidates.length) return null;
-
-      const seen = new Set();
-      const unique = [];
-
-      for (const item of candidates) {
-        const key = `${item.ar}|${item.en}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          unique.push(item);
+      for (const rule of allergenRules) {
+        if (rule.words.some((w) => haystack.includes(String(w).toLowerCase()))) {
+          found.push(rule.key);
         }
       }
 
-      const top = unique
-        .sort((a, b) => b.class - a.class || (a.ar || a.en).localeCompare(b.ar || b.en))
-        .slice(0, 5);
-
-      const maxClass = top[0]?.class ?? 0;
-      const base = verdictFromClass(maxClass);
-
-      const names = top.map((x) => x.ar || x.en).filter(Boolean);
-      const severe = top.filter((x) => x.class >= 5).map((x) => x.ar || x.en);
-      const moderate = top.filter((x) => x.class >= 3 && x.class <= 4).map((x) => x.ar || x.en);
-
-      let reason = "";
-      if (severe.length) {
-        reason = `تمت مطابقة المنتج مع عناصر عالية التفاعل في نتائجك مثل: ${severe.slice(0, 3).join("، ")}`;
-      } else if (moderate.length) {
-        reason = `تمت مطابقة المنتج مع عناصر متوسطة التفاعل في نتائجك مثل: ${moderate.slice(0, 3).join("، ")}`;
-      } else {
-        reason = `لم يظهر في المطابقات المحلية عنصر مرتفع التفاعل، وأقرب عناصر التقرير كانت: ${names.slice(0, 3).join("، ")}`;
-      }
-
-      return {
-        verdict: base.verdict,
-        reason,
-        ingredients: names.slice(0, 5).join("، ") || "غير محددة",
-        allergens: names.slice(0, 5).join("، ") || "غير واضحة",
-        confidence: base.confidence,
-        source: "local"
-      };
+      return [...new Set(found)];
     }
 
-    // استدعاء Gemini فقط إذا لم تكفِ المطابقات المحلية
-    async function analyzeWithGemini(name, ctx) {
-      const localHints = [];
+    function uniqueArray(arr) {
+      return [...new Set((arr || []).filter(Boolean))];
+    }
 
-      const refs = Array.isArray(ctx?.productEstimate?.references)
-        ? ctx.productEstimate.references
-        : [];
-      const matches = Array.isArray(ctx?.localMatches) ? ctx.localMatches : [];
+    const prompt = `أنت مساعد مختص بالحساسية الغذائية وبحث المنتجات.
 
-      for (const item of [...refs, ...matches].slice(0, 8)) {
-        if (item?.ar || item?.en) {
-          localHints.push(`${item.ar || item.en} (class ${item.class ?? 0})`);
-        }
-      }
-
-      const prompt = `أنت مساعد مختص بالحساسية الغذائية.
-
-اسم المنتج: ${name}
-${localHints.length ? `أقرب عناصر من نتائج التحليل السابقة: ${localHints.join("، ")}` : ""}
+اسم المنتج: ${q}
 
 المطلوب:
-1) استنتج نوع المنتج من اسمه.
-2) اذكر المكونات المحتملة الشائعة له.
-3) اربطها بالمواد التي قد تكون مشكلة مثل:
-الحليب، صفار البيض، بياض البيض، الكازين، الجلوتين، القمح، الشعير، الجاودار، السمسم، الخردل، الفول السوداني، اللوز، الكاجو، الفستق، حليب الماعز، حليب الخروف، الجبن الكريمي، الطماطم، الكوسا.
-4) أجب بالعربية فقط.
-5) لا تستخدم JSON.
-6) لا تستخدم markdown.
-7) اكتب 5 أسطر فقط وبالترتيب:
+1) ابحث على الويب عن هذا المنتج أو أقرب منتج مطابق له.
+2) استخرج المكونات من المصادر الظاهرة إن أمكن.
+3) إذا لم تجد صفحة مؤكدة، فاذكر المكونات المحتملة الشائعة فقط بوضوح.
+4) لا تعطِ الحكم النهائي على الحساسية، فقط أعطني معلومات المنتج والمكونات.
+5) أجب بالعربية فقط.
+6) لا تستخدم JSON.
+7) لا تستخدم markdown.
+8) اكتب فقط بهذه الصيغة وبنفس الترتيب:
 
-الحكم: ...
-السبب: ...
-المكونات المحتملة: ...
-المواد المحسسة المكتشفة: ...
-الثقة: ...`;
+نوع المنتج: ...
+المكونات: ...
+ملاحظات: ...
+ثقة المكونات: ...`;
 
-      const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": process.env.GEMINI_API_KEY
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: prompt }]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.15,
-              maxOutputTokens: 170,
-              topP: 0.8
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": process.env.GEMINI_API_KEY
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: prompt }]
             }
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error?.message || "Gemini API failed");
+          ],
+          tools: [
+            {
+              google_search: {}
+            }
+          ],
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 220,
+            topP: 0.8
+          }
+        })
       }
+    );
 
-      const rawText = String(
-        data?.candidates?.[0]?.content?.parts?.[0]?.text || ""
-      )
-        .replace(/^```json\s*/i, "")
-        .replace(/^```\s*/i, "")
-        .replace(/```$/i, "")
-        .trim();
+    const data = await response.json();
 
-      let verdict = "";
-      let reason = "";
-      let ingredients = "";
-      let allergens = "";
-      let confidence = "";
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: data?.error?.message || "Gemini API failed",
+        raw: data
+      });
+    }
 
-      const lines = rawText
-        .replace(/\r\n/g, "\n")
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean);
+    const rawText = String(
+      data?.candidates?.[0]?.content?.parts?.[0]?.text || ""
+    )
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/```$/i, "")
+      .trim();
 
-      for (const line of lines) {
-        if (line.startsWith("الحكم:")) verdict = line.replace(/^الحكم:\s*/, "").trim();
-        else if (line.startsWith("السبب:")) reason = line.replace(/^السبب:\s*/, "").trim();
-        else if (line.startsWith("المكونات المحتملة:")) ingredients = line.replace(/^المكونات المحتملة:\s*/, "").trim();
-        else if (line.startsWith("المواد المحسسة المكتشفة:")) allergens = line.replace(/^المواد المحسسة المكتشفة:\s*/, "").trim();
-        else if (line.startsWith("الثقة:")) confidence = line.replace(/^الثقة:\s*/, "").trim();
+    let productType = "";
+    let ingredientsText = "";
+    let notesText = "";
+    let ingredientsConfidence = "";
+
+    const lines = rawText
+      .replace(/\r\n/g, "\n")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    for (const line of lines) {
+      if (line.startsWith("نوع المنتج:")) {
+        productType = line.replace(/^نوع المنتج:\s*/, "").trim();
+      } else if (line.startsWith("المكونات:")) {
+        ingredientsText = line.replace(/^المكونات:\s*/, "").trim();
+      } else if (line.startsWith("ملاحظات:")) {
+        notesText = line.replace(/^ملاحظات:\s*/, "").trim();
+      } else if (line.startsWith("ثقة المكونات:")) {
+        ingredientsConfidence = line.replace(/^ثقة المكونات:\s*/, "").trim();
       }
-
-      if (!verdict) verdict = "يحتاج تحقق";
-      if (!reason) reason = "لم تكن هناك معلومات كافية لتحديد حكم أدق";
-      if (!ingredients) ingredients = "غير محددة";
-      if (!allergens) allergens = "غير واضحة";
-      if (!confidence) confidence = "منخفضة";
-
-      return { verdict, reason, ingredients, allergens, confidence, source: "gemini" };
     }
 
-    const localResult = analyzeFromLocalContext(q, localContext);
+    if (!productType) productType = "غير محدد";
+    if (!ingredientsText) ingredientsText = "غير محددة";
+    if (!notesText) notesText = "لا توجد ملاحظات إضافية";
+    if (!ingredientsConfidence) ingredientsConfidence = "منخفضة";
 
-    // إذا وجدنا مطابقة قوية أو متوسطة في التقرير المحلي، لا نحتاج Gemini
-    if (localResult && (localResult.confidence === "مرتفعة" || localResult.verdict !== "غالبًا آمن")) {
-      const finalText =
-        `الحكم: ${localResult.verdict}\n` +
-        `السبب: ${localResult.reason}\n` +
-        `المكونات المحتملة: ${localResult.ingredients}\n` +
-        `المواد المحسسة المكتشفة: ${localResult.allergens}\n` +
-        `الثقة: ${localResult.confidence}`;
-      return res.status(200).json({ result: finalText });
+    const analysisText = `${q} ${productType} ${ingredientsText} ${notesText}`;
+    const detectedAllergens = detectAllergens(analysisText);
+
+    let verdict = "يحتاج تحقق";
+    let reason = "لا توجد معلومات كافية لتأكيد وجود مادة محسسة بشكل حاسم";
+    let confidence = "منخفضة";
+
+    if (detectedAllergens.length > 0) {
+      verdict = "غير آمن";
+      reason = `تم اكتشاف مواد محسسة محتملة في المكونات أو وصف المنتج: ${detectedAllergens.join("، ")}`;
+      confidence =
+        ingredientsConfidence.includes("مرتفع") || ingredientsConfidence.includes("عالية")
+          ? "مرتفعة"
+          : ingredientsConfidence.includes("متوسط")
+          ? "متوسطة"
+          : "متوسطة";
+    } else if (
+      ingredientsText &&
+      ingredientsText !== "غير محددة" &&
+      !/غير واضحة|غير معروف|غير محددة/i.test(ingredientsText)
+    ) {
+      verdict = "يحتاج تحقق";
+      reason = "تم العثور على مكونات محتملة لكن لم تُكتشف مادة محسسة واضحة من قائمتك";
+      confidence = "منخفضة";
     }
 
-    // إذا لا توجد مطابقة واضحة، نستخدم Gemini ثم نرجع النتيجة
-    let geminiResult = null;
-    try {
-      geminiResult = await analyzeWithGemini(q, localContext || {});
-    } catch (e) {
-      geminiResult = {
-        verdict: localResult?.verdict || "يحتاج تحقق",
-        reason: localResult?.reason || "تعذر الحصول على تحليل إضافي من الخدمة",
-        ingredients: localResult?.ingredients || "غير محددة",
-        allergens: localResult?.allergens || "غير واضحة",
-        confidence: localResult?.confidence || "منخفضة",
-        source: "fallback"
-      };
+    const grounding =
+      data?.candidates?.[0]?.groundingMetadata ||
+      data?.candidates?.[0]?.grounding_metadata ||
+      null;
+
+    const sources = [];
+
+    const groundingChunks = grounding?.groundingChunks || grounding?.grounding_chunks || [];
+    for (const chunk of groundingChunks) {
+      const web = chunk?.web;
+      if (web?.uri || web?.title) {
+        sources.push({
+          title: web?.title || web?.uri || "مصدر",
+          url: web?.uri || ""
+        });
+      }
     }
+
+    const uniqueSources = uniqueArray(
+      sources.map((s) => JSON.stringify(s))
+    ).map((s) => JSON.parse(s));
 
     const finalText =
-      `الحكم: ${geminiResult.verdict}\n` +
-      `السبب: ${geminiResult.reason}\n` +
-      `المكونات المحتملة: ${geminiResult.ingredients}\n` +
-      `المواد المحسسة المكتشفة: ${geminiResult.allergens}\n` +
-      `الثقة: ${geminiResult.confidence}`;
+      `الحكم: ${verdict}\n` +
+      `السبب: ${reason}\n` +
+      `نوع المنتج: ${productType}\n` +
+      `المكونات المحتملة: ${ingredientsText}\n` +
+      `المواد المحسسة المكتشفة: ${detectedAllergens.length ? detectedAllergens.join("، ") : "غير واضحة"}\n` +
+      `الثقة: ${confidence}\n` +
+      `ملاحظات: ${notesText}`;
 
-    return res.status(200).json({ result: finalText });
+    return res.status(200).json({
+      result: finalText,
+      sources: uniqueSources
+    });
   } catch (error) {
     return res.status(500).json({
       error: "Internal Server Error",
