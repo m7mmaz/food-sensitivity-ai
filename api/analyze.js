@@ -15,29 +15,20 @@ export default async function handler(req, res) {
     }
 
     const compactContext = localContext
-      ? JSON.stringify(localContext).slice(0, 1800)
+      ? JSON.stringify(localContext).slice(0, 1400)
       : "";
 
-    const prompt = `أنت محلل حساسية غذائية مختصر جداً.
+    const prompt = `أنت مساعد مختصر لتحليل حساسية غذائية.
 
-اسم المنتج أو المادة: ${query}
-${compactContext ? `سياق محلي من التطبيق: ${compactContext}` : ""}
+اسم المنتج: ${query}
+${compactContext ? `سياق محلي مختصر: ${compactContext}` : ""}
 
-المطلوب:
-- اعطِ جواباً قصيراً جداً.
-- أجب بصيغة JSON فقط بدون أي شرح خارج JSON.
-- استخدم نفس المفاتيح التالية فقط:
-{
-  "verdict": "آمن" | "غير آمن" | "يحتاج تحقق",
-  "reason": "سبب مختصر جداً لا يتجاوز 18 كلمة",
-  "flaggedAllergens": ["..."],
-  "ingredients": ["..."],
-  "confidence": "منخفضة" | "متوسطة" | "مرتفعة",
-  "note": "تنبيه مختصر جداً"
-}
-- اجعل القوائم قصيرة جداً، بحد أقصى 3 عناصر.
-- إذا لم تكن متأكداً اختر "يحتاج تحقق".
-- لا تكرر اسم المنتج في reason إلا عند الحاجة.`;
+أعطني الإجابة بالعربية فقط، وبحد أقصى 4 أسطر، وبدون JSON وبدون markdown.
+الصيغة المطلوبة:
+الحكم: آمن أو غير آمن أو يحتاج تحقق
+السبب: سبب قصير جداً
+المكونات المحتملة: اذكر حتى 3 فقط
+الثقة: منخفضة أو متوسطة أو مرتفعة`;
 
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
@@ -56,7 +47,7 @@ ${compactContext ? `سياق محلي من التطبيق: ${compactContext}` : 
           ],
           generationConfig: {
             temperature: 0.1,
-            maxOutputTokens: 120,
+            maxOutputTokens: 90,
             topP: 0.8
           }
         })
@@ -75,7 +66,9 @@ ${compactContext ? `سياق محلي من التطبيق: ${compactContext}` : 
     const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
 
     if (!rawText) {
-      return res.status(200).json({ result: "لم يتم العثور على نتيجة واضحة." });
+      return res.status(200).json({
+        result: "الحكم: يحتاج تحقق\nالسبب: لم يتم العثور على نتيجة واضحة\nالمكونات المحتملة: غير محددة\nالثقة: منخفضة"
+      });
     }
 
     const cleaned = rawText
@@ -84,12 +77,23 @@ ${compactContext ? `سياق محلي من التطبيق: ${compactContext}` : 
       .replace(/```$/i, "")
       .trim();
 
-    try {
-      const parsed = JSON.parse(cleaned);
-      return res.status(200).json({ result: parsed });
-    } catch {
-      return res.status(200).json({ result: cleaned });
+    if (cleaned.startsWith("{") && cleaned.endsWith("}")) {
+      try {
+        const parsed = JSON.parse(cleaned);
+        const verdict = parsed.verdict || "يحتاج تحقق";
+        const reason = parsed.reason || parsed.reasoning || "لا توجد تفاصيل كافية";
+        const ingredients = Array.isArray(parsed.ingredients) && parsed.ingredients.length
+          ? parsed.ingredients.slice(0, 3).join("، ")
+          : "غير محددة";
+        const confidence = parsed.confidence || "منخفضة";
+
+        return res.status(200).json({
+          result: `الحكم: ${verdict}\nالسبب: ${reason}\nالمكونات المحتملة: ${ingredients}\nالثقة: ${confidence}`
+        });
+      } catch {}
     }
+
+    return res.status(200).json({ result: cleaned });
   } catch (error) {
     return res.status(500).json({
       error: "Internal Server Error",
