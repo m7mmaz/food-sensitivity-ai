@@ -15,17 +15,15 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-حلل المنتج التالي للمستخدم من ناحية الحساسية الغذائية:
+حلل المنتج التالي من ناحية الحساسية الغذائية:
 "${query}"
 
-أجب بالعربية فقط وبشكل مختصر ومنظم بهذا الشكل:
+أجب بالعربية فقط بهذا الشكل:
 - الحكم: آمن / غير آمن / يحتاج تحقق
 - السبب:
-- المكونات أو المواد المثيرة المحتملة:
+- المواد المثيرة المحتملة:
 - درجة الثقة:
-- تنبيه مختصر:
-
-إذا لم تكن متأكدًا، قل "يحتاج تحقق" بوضوح.
+- تنبيه:
 `;
 
     const response = await fetch(
@@ -49,8 +47,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error:
-          data?.error?.message || "Gemini API request failed",
+        error: data?.error?.message || "Gemini API request failed",
         raw: data,
       });
     }
