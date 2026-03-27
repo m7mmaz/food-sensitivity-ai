@@ -798,13 +798,71 @@ function getCurrentLocalContext(query){
 }
 
 function renderOnlineResult(data){
-  // إذا كانت النتيجة نصية، نحاول أولاً استخراج JSON منها إن وجد
+  const box = $('onlineResult');
+
+  function renderStructuredText(txt){
+    const normalized = String(txt || '')
+      .replace(/\\n/g, '\n')
+      .replace(/\r\n/g, '\n')
+      .trim();
+
+    if(!normalized){
+      box.innerHTML = `
+        <div class="note">
+          <div class="pills"><span class="pill amber">🤖 نتيجة غير مكتملة</span></div>
+          <div style="margin-top:12px;line-height:1.95">لم تصل نتيجة قابلة للعرض.</div>
+        </div>`;
+      return;
+    }
+
+    const lines = normalized
+      .split('\n')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const verdictLine = lines.find(l => l.startsWith('الحكم:')) || '';
+    const reasonLine = lines.find(l => l.startsWith('السبب:')) || '';
+    const ingredientsLine = lines.find(l => l.startsWith('المكونات المحتملة:')) || '';
+    const confidenceLine = lines.find(l => l.startsWith('الثقة:')) || '';
+
+    const verdict = verdictLine.replace(/^الحكم:\s*/, '').trim();
+    const reason = reasonLine.replace(/^السبب:\s*/, '').trim();
+    const ingredients = ingredientsLine.replace(/^المكونات المحتملة:\s*/, '').trim();
+    const confidence = confidenceLine.replace(/^الثقة:\s*/, '').trim();
+
+    const verdictTone = verdict === 'غير آمن' ? 'red' : verdict === 'يحتاج تحقق' ? 'amber' : verdict ? 'green' : 'blue';
+
+    // إذا كانت النتيجة منظمة، اعرضها بشكل جميل
+    if(verdict || reason || ingredients || confidence){
+      box.innerHTML = `
+        <div class="note">
+          <div class="pills">
+            <span class="pill ${verdictTone}">🤖 ${escapeHtml(verdict || 'نتيجة التحليل')}</span>
+          </div>
+          ${reason ? `<div style="margin-top:12px;line-height:1.95"><strong>السبب:</strong> ${escapeHtml(reason)}</div>` : ''}
+          ${ingredients ? `<div style="margin-top:12px;line-height:1.95"><strong>المكونات المحتملة:</strong> ${escapeHtml(ingredients)}</div>` : ''}
+          ${confidence ? `<div style="margin-top:12px;line-height:1.95"><strong>الثقة:</strong> ${escapeHtml(confidence)}</div>` : ''}
+          <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
+        </div>`;
+      return;
+    }
+
+    // وإلا اعرض النص كاملًا كما هو
+    box.innerHTML = `
+      <div class="note">
+        <div class="pills">
+          <span class="pill blue">🤖 نتيجة التحليل</span>
+        </div>
+        <div style="margin-top:12px;line-height:1.95;white-space:pre-wrap">${escapeHtml(normalized)}</div>
+        <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
+      </div>`;
+  }
+
   if(typeof data === 'string'){
     const cleanedText = String(data || '').trim();
 
-    // إذا رجعت أقواس فقط أو نتيجة فارغة، اعرض رسالة مفهومة
     if(!cleanedText || cleanedText === '{' || cleanedText === '}' || cleanedText === '{}' || cleanedText === '[]'){
-      $('onlineResult').innerHTML = `
+      box.innerHTML = `
         <div class="note">
           <div class="pills">
             <span class="pill amber">🤖 نتيجة غير مكتملة</span>
@@ -815,7 +873,6 @@ function renderOnlineResult(data){
       return;
     }
 
-    // محاولة استخراج JSON من داخل النص أو من code fences
     const candidate = cleanedText
       .replace(/^```json\s*/i, '')
       .replace(/^```\s*/i, '')
@@ -832,15 +889,7 @@ function renderOnlineResult(data){
       } catch(e) {}
     }
 
-    $('onlineResult').innerHTML = `
-      <div class="note">
-        <div class="pills">
-          <span class="pill blue">🤖 نتيجة التحليل</span>
-        </div>
-        <div style="margin-top:12px;line-height:1.95;white-space:pre-wrap">${escapeHtml(cleanedText)}</div>
-        <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
-      </div>`;
-    return;
+    return renderStructuredText(candidate);
   }
 
   const safeData = data && typeof data === 'object' ? data : {};
@@ -853,7 +902,7 @@ function renderOnlineResult(data){
       <div class="small">${escapeHtml(src.url)}</div>
     </div>`).join('') : '';
 
-  $('onlineResult').innerHTML = `
+  box.innerHTML = `
     <div class="note">
       <div class="pills">
         <span class="pill ${verdictTone}">🤖 ${escapeHtml(safeData.verdict || 'غير محدد')}</span>
