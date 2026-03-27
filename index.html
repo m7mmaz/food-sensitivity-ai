@@ -800,7 +800,7 @@ function getCurrentLocalContext(query){
 function renderOnlineResult(data){
   const box = $('onlineResult');
 
-  function renderStructuredText(txt){
+  const renderRaw = (txt, badge='🤖 نتيجة التحليل') => {
     const normalized = String(txt || '')
       .replace(/\\n/g, '\n')
       .replace(/\r\n/g, '\n')
@@ -815,105 +815,66 @@ function renderOnlineResult(data){
       return;
     }
 
-    const lines = normalized
-      .split('\n')
-      .map(s => s.trim())
-      .filter(Boolean);
-
-    const verdictLine = lines.find(l => l.startsWith('الحكم:')) || '';
-    const reasonLine = lines.find(l => l.startsWith('السبب:')) || '';
-    const ingredientsLine = lines.find(l => l.startsWith('المكونات المحتملة:')) || '';
-    const confidenceLine = lines.find(l => l.startsWith('الثقة:')) || '';
-
-    const verdict = verdictLine.replace(/^الحكم:\s*/, '').trim();
-    const reason = reasonLine.replace(/^السبب:\s*/, '').trim();
-    const ingredients = ingredientsLine.replace(/^المكونات المحتملة:\s*/, '').trim();
-    const confidence = confidenceLine.replace(/^الثقة:\s*/, '').trim();
-
-    const verdictTone = verdict === 'غير آمن' ? 'red' : verdict === 'يحتاج تحقق' ? 'amber' : verdict ? 'green' : 'blue';
-
-    // إذا كانت النتيجة منظمة، اعرضها بشكل جميل
-    if(verdict || reason || ingredients || confidence){
-      box.innerHTML = `
-        <div class="note">
-          <div class="pills">
-            <span class="pill ${verdictTone}">🤖 ${escapeHtml(verdict || 'نتيجة التحليل')}</span>
-          </div>
-          ${reason ? `<div style="margin-top:12px;line-height:1.95"><strong>السبب:</strong> ${escapeHtml(reason)}</div>` : ''}
-          ${ingredients ? `<div style="margin-top:12px;line-height:1.95"><strong>المكونات المحتملة:</strong> ${escapeHtml(ingredients)}</div>` : ''}
-          ${confidence ? `<div style="margin-top:12px;line-height:1.95"><strong>الثقة:</strong> ${escapeHtml(confidence)}</div>` : ''}
-          <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
-        </div>`;
-      return;
-    }
-
-    // وإلا اعرض النص كاملًا كما هو
     box.innerHTML = `
       <div class="note">
         <div class="pills">
-          <span class="pill blue">🤖 نتيجة التحليل</span>
+          <span class="pill blue">${badge}</span>
         </div>
         <div style="margin-top:12px;line-height:1.95;white-space:pre-wrap">${escapeHtml(normalized)}</div>
         <div class="confidence">هذه النتيجة النصية جاءت مباشرة من خدمة التحليل الأونلاين.</div>
       </div>`;
-  }
+  };
 
   if(typeof data === 'string'){
-    const cleanedText = String(data || '').trim();
+    const cleanedText = String(data || '')
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```$/i, '')
+      .trim();
 
     if(!cleanedText || cleanedText === '{' || cleanedText === '}' || cleanedText === '{}' || cleanedText === '[]'){
       box.innerHTML = `
         <div class="note">
-          <div class="pills">
-            <span class="pill amber">🤖 نتيجة غير مكتملة</span>
-          </div>
+          <div class="pills"><span class="pill amber">🤖 نتيجة غير مكتملة</span></div>
           <div style="margin-top:12px;line-height:1.95">الخدمة رجّعت نتيجة غير قابلة للعرض. جرّب مرة أخرى أو استخدم اسم منتج أوضح.</div>
           <div class="confidence">تم تجاهل استجابة غير مكتملة من خدمة التحليل الأونلاين.</div>
         </div>`;
       return;
     }
 
-    const candidate = cleanedText
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/```$/i, '')
-      .trim();
-
-    const firstBrace = candidate.indexOf('{');
-    const lastBrace = candidate.lastIndexOf('}');
+    // إذا رجع JSON كنص، حاول فقط تحويله لنص مرتب؛ وإلا اعرض النص كما هو كاملًا
+    const firstBrace = cleanedText.indexOf('{');
+    const lastBrace = cleanedText.lastIndexOf('}');
     if(firstBrace !== -1 && lastBrace > firstBrace){
-      const maybeJson = candidate.slice(firstBrace, lastBrace + 1);
       try {
+        const maybeJson = cleanedText.slice(firstBrace, lastBrace + 1);
         const parsed = JSON.parse(maybeJson);
         return renderOnlineResult(parsed);
       } catch(e) {}
     }
 
-    return renderStructuredText(candidate);
+    return renderRaw(cleanedText);
   }
 
-  const safeData = data && typeof data === 'object' ? data : {};
-  const verdictTone = safeData.verdict === 'غير آمن' ? 'red' : safeData.verdict === 'يحتاج تحقق' ? 'amber' : 'green';
-  const ingredients = Array.isArray(safeData.ingredients) ? safeData.ingredients.map(x => `<span class="pill gray">${escapeHtml(x)}</span>`).join(' ') : '';
-  const flags = Array.isArray(safeData.flaggedAllergens) ? safeData.flaggedAllergens.map(x => `<span class="pill red">${escapeHtml(x)}</span>`).join(' ') : '';
-  const sources = Array.isArray(safeData.sources) ? safeData.sources.map(src => `
-    <div class="sourceItem">
-      <div><a href="${escapeHtml(src.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(src.title || src.url)}</a></div>
-      <div class="small">${escapeHtml(src.url)}</div>
-    </div>`).join('') : '';
+  if(data && typeof data === 'object'){
+    const verdict = data.verdict || data['الحكم'] || '';
+    const reason = data.reason || data.reasoning || data['السبب'] || '';
+    const ingredients = Array.isArray(data.ingredients)
+      ? data.ingredients.slice(0,3).join('، ')
+      : (data['المكونات المحتملة'] || '');
+    const confidence = data.confidence || data['الثقة'] || '';
 
-  box.innerHTML = `
-    <div class="note">
-      <div class="pills">
-        <span class="pill ${verdictTone}">🤖 ${escapeHtml(safeData.verdict || 'غير محدد')}</span>
-        <span class="pill blue">🎯 الثقة: ${escapeHtml(safeData.confidence || 'غير محددة')}</span>
-      </div>
-      <div style="margin-top:12px;line-height:1.9"><strong>السبب:</strong> ${escapeHtml(safeData.reason || safeData.reasoning || 'لا يوجد تفسير.')}</div>
-      ${flags ? `<div style="margin-top:12px"><strong>المكونات الحساسة المكتشفة:</strong><div class="quick" style="margin-top:8px">${flags}</div></div>` : ''}
-      ${ingredients ? `<div style="margin-top:12px"><strong>المكونات المستخرجة:</strong><div class="quick" style="margin-top:8px">${ingredients}</div></div>` : ''}
-      <div class="confidence">${escapeHtml(safeData.note || 'تحقق دائماً من ملصق العبوة الحالية لأن التركيبات قد تتغير.')}</div>
-      ${sources ? `<div class="sources"><strong>المصادر:</strong>${sources}</div>` : ''}
-    </div>`;
+    const lines = [
+      verdict ? `الحكم: ${verdict}` : '',
+      reason ? `السبب: ${reason}` : '',
+      ingredients ? `المكونات المحتملة: ${ingredients}` : '',
+      confidence ? `الثقة: ${confidence}` : ''
+    ].filter(Boolean).join('\n');
+
+    return renderRaw(lines || JSON.stringify(data, null, 2), '🤖 نتيجة التحليل');
+  }
+
+  return renderRaw(String(data || ''));
 }
 
 
